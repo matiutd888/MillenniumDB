@@ -10,7 +10,6 @@ struct MultiSourceSearchState {
     // The ID of the node the algorithm has reached
     const ObjectId node_id;
 
-    const ObjectId bfs_id;
 
     // Pointer to the previous SearchState that leads to the current one
     // (used to reconstruct paths)
@@ -26,6 +25,9 @@ struct MultiSourceSearchState {
     // Indicates in which direction the edge was traversed
     // (the language allows traversing in both directions)
     const bool inverse_direction;
+    
+    
+    const ObjectId bfs_id;
 
     MultiSourceSearchState(uint32_t           automaton_state,
                 ObjectId           node_id,
