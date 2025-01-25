@@ -27,6 +27,7 @@
 #include "query/executor/binding_iter/paths/any_trails/dfs_enum.h"
 #include "query/executor/binding_iter/paths/any_walks/bfs_check.h"
 #include "query/executor/binding_iter/paths/any_walks/bfs_enum.h"
+#include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts.h"
 #include "query/executor/binding_iter/paths/any_walks/dfs_check.h"
 #include "query/executor/binding_iter/paths/any_walks/dfs_enum.h"
 #include "query/executor/binding_iter/paths/experimental/all_shortest_walks_count/bfs_check.h"
@@ -280,9 +281,9 @@ std::unique_ptr<BindingIter> PathPlan::get_enum(const RPQ_DFA& automaton, Id sta
             }
         } else {
             if (automaton.total_final_states > 1) {
-                return make_unique<Paths::Any::BFSEnum<true>>(path_var, start, end, automaton, std::move(provider));
+                return make_unique<Paths::Any::BFSMultipleStarts<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
             } else {
-                return make_unique<Paths::Any::BFSEnum<false>>(path_var, start, end, automaton, std::move(provider));
+                return make_unique<Paths::Any::BFSMultipleStarts<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
             }
         }
     }
@@ -309,9 +310,9 @@ std::unique_ptr<BindingIter> PathPlan::get_enum(const RPQ_DFA& automaton, Id sta
     case PathSemantic::ANY_SHORTEST_WALKS:
     case PathSemantic::DEFAULT:
         if (automaton.total_final_states > 1) {
-            return make_unique<Paths::Any::BFSEnum<true>>(path_var, start, end, automaton, std::move(provider));
+            return make_unique<Paths::Any::BFSMultipleStarts<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
         } else {
-            return make_unique<Paths::Any::BFSEnum<false>>(path_var, start, end, automaton, std::move(provider));
+            return make_unique<Paths::Any::BFSMultipleStarts<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
         }
     case PathSemantic::ALL_SHORTEST_WALKS_COUNT:
         throw QuerySemanticException("ALL_SHORTEST_WALKS_COUNT enum not supported yet");
