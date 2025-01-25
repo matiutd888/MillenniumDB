@@ -1,7 +1,12 @@
 #include "bfs_multiple_starts.h"
 
-#include "system/path_manager.h"
+#include <iostream>
 #include <boost/range/algorithm/set_algorithm.hpp>
+
+#include "graph_models/quad_model/quad_object_id.h"
+#include "graph_models/quad_model/quad_model.h"
+#include "system/path_manager.h"
+
 
 using namespace std;
 using namespace Paths::Any;
@@ -11,6 +16,22 @@ void BFSMultipleStarts<MULTIPLE_FINAL>::_begin(Binding &_parent_binding)
 {
     parent_binding = &_parent_binding;
     // first_next = true;
+
+    //////////////////////////////////////////////////////////////
+    // Override starting nodes using the nodes with label "start"
+    //////////////////////////////////////////////////////////////
+    start_nodes.clear();
+    bool interruption = false;
+    auto label_start = QuadObjectId::get_string("start").id;
+    auto it = quad_model.label_node->get_range(&interruption, {label_start, 0}, {label_start, UINT64_MAX});
+
+    std::cout << "starting nodes:\n";
+    for (auto record = it.next(); record != nullptr; record = it.next()) {
+        ObjectId node((*record)[1]);
+        std::cout << node << std::endl;
+        start_nodes.push_back(node);
+    }
+    //////////////////////////////////////////////////////////////
 
     for (auto node : start_nodes)
     {

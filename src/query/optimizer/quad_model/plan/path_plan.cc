@@ -34,6 +34,7 @@
 #include "query/executor/binding_iter/paths/index_provider/quad_model_index_provider.h"
 #include "system/path_manager.h"
 #include "query/executor/binding_iter/paths/unfixed_composite.h"
+#include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts.h"
 
 using namespace MQL;
 using namespace std;
@@ -307,12 +308,19 @@ std::unique_ptr<BindingIter> PathPlan::get_enum(const RPQ_DFA& automaton, Id sta
     case PathSemantic::ANY_SHORTEST_TRAILS:
         return make_unique<Paths::AnyTrails::BFSEnum>(path_var, start, end, automaton, std::move(provider));
     case PathSemantic::ANY_SHORTEST_WALKS:
-    case PathSemantic::DEFAULT:
         if (automaton.total_final_states > 1) {
             return make_unique<Paths::Any::BFSEnum<true>>(path_var, start, end, automaton, std::move(provider));
         } else {
             return make_unique<Paths::Any::BFSEnum<false>>(path_var, start, end, automaton, std::move(provider));
         }
+    case PathSemantic::DEFAULT: {
+        std::vector<Id> start_nodes;
+        if (automaton.total_final_states > 1) {
+            return make_unique<Paths::Any::BFSMultipleStarts<true>>(path_var, start_nodes, end, automaton, std::move(provider));
+        } else {
+            return make_unique<Paths::Any::BFSMultipleStarts<false>>(path_var, start_nodes, end, automaton, std::move(provider));
+        }
+    }
     case PathSemantic::ALL_SHORTEST_WALKS_COUNT:
         throw QuerySemanticException("ALL_SHORTEST_WALKS_COUNT enum not supported yet");
     default:
