@@ -35,6 +35,7 @@
 #include "system/path_manager.h"
 #include "query/executor/binding_iter/paths/unfixed_composite.h"
 #include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts.h"
+#include "query/executor/binding_iter/paths/any_walks/debug_mati.h"
 
 using namespace MQL;
 using namespace std;
@@ -146,7 +147,7 @@ unique_ptr<Paths::IndexProvider> PathPlan::get_provider(const RPQ_DFA& automaton
 
 std::unique_ptr<BindingIter> PathPlan::get_check(const RPQ_DFA& automaton, Id start, Id end) const {
     auto provider = get_provider(automaton);
-
+    _debug_mati() << "path_semantic: " << Paths::get_semantic_str(path_semantic) << std::endl;
     switch (path_semantic) {
     case PathSemantic::ALL_ACYCLIC: {
         if (quad_model.path_mode == PathMode::DFS) {
@@ -281,9 +282,9 @@ std::unique_ptr<BindingIter> PathPlan::get_enum(const RPQ_DFA& automaton, Id sta
             }
         } else {
             if (automaton.total_final_states > 1) {
-                return make_unique<Paths::Any::BFSEnum<true>>(path_var, start, end, automaton, std::move(provider));
+                return make_unique<Paths::Any::BFSMultipleStarts<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
             } else {
-                return make_unique<Paths::Any::BFSEnum<false>>(path_var, start, end, automaton, std::move(provider));
+                return make_unique<Paths::Any::BFSMultipleStarts<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
             }
         }
     }
@@ -309,9 +310,9 @@ std::unique_ptr<BindingIter> PathPlan::get_enum(const RPQ_DFA& automaton, Id sta
         return make_unique<Paths::AnyTrails::BFSEnum>(path_var, start, end, automaton, std::move(provider));
     case PathSemantic::ANY_SHORTEST_WALKS:
         if (automaton.total_final_states > 1) {
-            return make_unique<Paths::Any::BFSEnum<true>>(path_var, start, end, automaton, std::move(provider));
+            return make_unique<Paths::Any::BFSMultipleStarts<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
         } else {
-            return make_unique<Paths::Any::BFSEnum<false>>(path_var, start, end, automaton, std::move(provider));
+            return make_unique<Paths::Any::BFSMultipleStarts<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
         }
     case PathSemantic::DEFAULT: {
         std::vector<Id> start_nodes;
