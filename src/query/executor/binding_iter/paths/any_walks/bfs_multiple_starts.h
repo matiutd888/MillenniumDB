@@ -76,12 +76,6 @@ namespace Paths
             std::queue<ObjectId> start_nodes_for_current_iteration;
             SearchNodeId node_for_current_iteration;
 
-
-            // Template type for storing nodes reached with a final state
-            typename std::conditional<MULTIPLE_FINAL,
-                                      boost::unordered_flat_set<uint64_t>,
-                                      DummySet>::type reached_final;
-
         public:
             // Statistics
             uint_fast32_t idx_searches = 0;

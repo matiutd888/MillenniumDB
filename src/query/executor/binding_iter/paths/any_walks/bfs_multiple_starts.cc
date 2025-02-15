@@ -64,11 +64,6 @@ void BFSMultipleStarts<MULTIPLE_FINAL>::_reset()
     visit_q = {};
     first_visit_q = {};
 
-    if (MULTIPLE_FINAL)
-    {
-        reached_final.clear();
-    }
-
     for (auto node : start_nodes)
     {
         ObjectId start_object_id = node.is_var() ? (*parent_binding)[node.get_var()] : node.get_OID();
@@ -103,10 +98,6 @@ bool BFSMultipleStarts<MULTIPLE_FINAL>::_next()
             visit_q.push(curr_first_node);
             if (automaton.is_final_state[automaton.start_state])
             {
-                if (MULTIPLE_FINAL)
-                {
-                    reached_final.insert(curr_first_node.second.id);
-                }
                 auto pointer_to_reached_state = &seen[curr_first_node.second].find(curr_first_node)->second;
                 auto path_id = path_manager.set_path(pointer_to_reached_state, path_var);
                 parent_binding->add(path_var, path_id);
@@ -245,25 +236,6 @@ const MultiSourceSearchState *BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbor
                     _debug_mati() << "old node_for_current_iteration " << node_for_current_iteration.first << ", " << node_for_current_iteration.second << std::endl;
                     node_for_current_iteration = new_node_id;
                     _debug_mati() << "new node_for_current_iteration " << node_for_current_iteration.first << ", " << node_for_current_iteration.second << std::endl;
-                    if (MULTIPLE_FINAL)
-                    {
-                        auto node_reached_final = reached_final.find(new_node_id.second.id);
-
-                        if (node_reached_final == reached_final.end() || true)
-                        {
-                            _debug_mati() << "multiple final and reached new final node " << std::endl;
-                            reached_final.insert(new_node_id.second.id);
-                            {
-                                auto bfs_id = start_nodes_for_current_iteration.front();
-                                start_nodes_for_current_iteration.pop();
-                                auto ms_search_state_it = seen[bfs_id].find(node_for_current_iteration);
-                                assert(ms_search_state_it != seen[bfs_id].end());
-                                auto ms_search_state = &(ms_search_state_it->second);
-                                return ms_search_state;
-                            }
-                        }
-                    }
-                    else
                     {
                         auto bfs_id = start_nodes_for_current_iteration.front();
                         start_nodes_for_current_iteration.pop();
