@@ -1,6 +1,11 @@
 #include "bfs_multiple_starts_naive.h"
+#include <iostream>
+#include <boost/range/algorithm/set_algorithm.hpp>
 
+#include "graph_models/quad_model/quad_object_id.h"
+#include "graph_models/quad_model/quad_model.h"
 #include "system/path_manager.h"
+
 
 using namespace std;
 using namespace Paths::Any;
