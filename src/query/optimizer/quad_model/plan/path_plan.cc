@@ -47,8 +47,12 @@ using namespace std;
 
 std::unique_ptr<BindingIter> PathPlan::run_multiple_walks(std::unique_ptr<Paths::IndexProvider> provider,const RPQ_DFA &automaton, Id start, VarId end) const
 {
-    std::string ms_strategy = std::getenv("MS_STRATEGY");
-    std::transform(ms_strategy.begin(), ms_strategy.end(), ms_strategy.begin(), ::tolower);
+    char* ms_strategy_c_str = std::getenv("MS_STRATEGY");
+    std::string ms_strategy = "";
+    if (ms_strategy_c_str != nullptr) {
+        ms_strategy = ms_strategy_c_str;
+        std::transform(ms_strategy.begin(), ms_strategy.end(), ms_strategy.begin(), ::tolower);
+    }
     if (ms_strategy == "naive")
     {
         if (automaton.total_final_states > 1)
