@@ -2,6 +2,8 @@
 # Edit at https://www.gitignore.io/?templates=c++
 
 .vscode
+delete_vscode_server.sh
+.devcontainer
 
 obj/*
 bin/*
