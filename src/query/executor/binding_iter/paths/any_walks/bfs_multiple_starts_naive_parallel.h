@@ -13,8 +13,6 @@
 #include "query/executor/binding_iter/paths/index_provider/path_index.h"
 #include "query/parser/paths/automaton/rpq_automaton.h"
 #include "search_state_multiple_starts.h"
-
-// // For unordered set
 // struct objectid_hash
 // {
 //     std::size_t operator()(const ObjectId &o) const
@@ -86,7 +84,7 @@ namespace Paths
                 VarId end,
                 RPQ_DFA automaton,
                 std::unique_ptr<IndexProvider> provider) : path_var(path_var),
-                                                           start(start),
+                                                           start_nodes(start_nodes),
                                                            end(end),
                                                            automaton(automaton),
                                                            provider(std::move(provider)) {}
@@ -117,4 +115,4 @@ namespace Paths
             }
         };
     }
-} // namespace Paths::Any
+};
