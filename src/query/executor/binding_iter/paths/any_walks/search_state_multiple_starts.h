@@ -9,6 +9,15 @@
 #include "query/parser/paths/automaton/rpq_automaton.h"
 
 namespace Paths { namespace Any {
+
+class DummyPairSet {
+public:
+    static inline void clear() { }
+    static inline std::pair<uint64_t, uint64_t> end() {return {0, 0};}
+    static inline std::pair<uint64_t, uint64_t> find(std::pair<uint64_t, uint64_t>) {return {0, 0};}
+    static inline void insert(std::pair<uint64_t, uint64_t>) { }
+};
+
 struct MultiSourceSearchState {
     // The ID of the node the algorithm has reached
     const ObjectId node_id;

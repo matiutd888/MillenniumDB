@@ -108,6 +108,7 @@ namespace Paths {
         template <bool> class BFSEnum;
         template <bool> class BFSMultipleStarts;
         template <bool> class BFSMultipleStartsNaive;
+        template <bool> class BFSMultipleStartsNaiveParallel;
         class DFSCheck;
         template <bool> class DFSEnum;
         class BFS_RDPQCheck;
@@ -220,6 +221,8 @@ public:
     virtual void visit(Paths::Any::BFSMultipleStarts<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<false>&)                = 0;
+    virtual void visit(Paths::Any::BFSMultipleStartsNaiveParallel<true>&)                 = 0;
+    virtual void visit(Paths::Any::BFSMultipleStartsNaiveParallel<false>&)                = 0;
     virtual void visit(Paths::AnySimple::BFSCheck<false>&)         = 0;
     virtual void visit(Paths::AnySimple::BFSCheck<true>&)          = 0;
     virtual void visit(Paths::AnySimple::BFSEnum<false>&)          = 0;
