@@ -72,8 +72,8 @@ namespace Paths
             // MATI reached_final should be a map starting_v -> [map of reached final states]
             // Template type for storing nodes reached with a final state
              typename std::conditional<MULTIPLE_FINAL,
-                                       boost::unordered_node_map<uint64_t, boost::unordered_flat_set<uint64_t>>,
-                                       DummySet>::type reached_final;
+                                       boost::unordered_flat_set<std::pair<int64_t, uint64_t>>,
+                                       DummyPairSet>::type reached_final;
 
         public:
             // Statistics

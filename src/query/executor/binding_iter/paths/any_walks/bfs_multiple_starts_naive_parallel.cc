@@ -1,6 +1,8 @@
 #include "bfs_multiple_starts_naive_parallel.h"
 #include <iostream>
 #include "system/path_manager.h"
+#include "graph_models/quad_model/quad_object_id.h"
+#include "graph_models/quad_model/quad_model.h"
 
 using namespace std;
 using namespace Paths::Any;
@@ -164,9 +166,9 @@ const MultiSourceSearchState* BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::ex
                 // Check if new path is solution
                 if (automaton.is_final_state[reached_state->automaton_state]) {
                     if (MULTIPLE_FINAL) {
-                        auto node_reached_final = reached_final.find(current_state.bfs_id, reached_state->node_id.id);
+                        auto node_reached_final = reached_final.find(std::make_pair(current_state.bfs_id.id, reached_state->node_id.id));
                         if (node_reached_final == reached_final.end()) {
-                            reached_final.insert(reached_state->node_id.id);
+                            reached_final.insert(std::make_pair(current_state.bfs_id.id, reached_state->node_id.id));
                             return reached_state.operator->();
                         }
                     } else {
