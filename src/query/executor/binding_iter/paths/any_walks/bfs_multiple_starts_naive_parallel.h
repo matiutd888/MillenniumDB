@@ -7,6 +7,7 @@
 
 #include <boost/unordered/unordered_node_set.hpp>
 #include <boost/unordered/unordered_flat_set.hpp>
+#include <boost/unordered/unordered_node_map.hpp>
 
 #include "query/executor/binding_iter.h"
 #include "query/executor/binding_iter/paths/any_walks/search_state.h"
@@ -54,10 +55,10 @@ namespace Paths
             Binding *parent_binding;
 
             // Set of visited MultiSourceSearchStates
-            boost::unordered_node_set<MultiSourceMultiSourceSearchState, std::hash<MultiSourceMultiSourceSearchState>> visited;
+            boost::unordered_node_set<MultiSourceSearchState, std::hash<MultiSourceSearchState>> visited;
 
             // Queue for BFS. Pointers point to the states in visited
-            std::queue<const MultiSourceMultiSourceSearchState *> open;
+            std::queue<const MultiSourceSearchState *> open;
 
             // Iterator for current node expansion
             std::unique_ptr<EdgeIter> iter;
@@ -71,7 +72,7 @@ namespace Paths
             // MATI reached_final should be a map starting_v -> [map of reached final states]
             // Template type for storing nodes reached with a final state
              typename std::conditional<MULTIPLE_FINAL,
-                                       boost::unordered_node_map<uint64_t, boost::unordered_flat_set<uint64_t>>
+                                       boost::unordered_node_map<uint64_t, boost::unordered_flat_set<uint64_t>>,
                                        DummySet>::type reached_final;
 
         public:

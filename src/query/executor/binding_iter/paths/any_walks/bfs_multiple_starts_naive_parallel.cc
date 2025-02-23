@@ -1,5 +1,5 @@
 #include "bfs_multiple_starts_naive_parallel.h"
-
+#include <iostream>
 #include "system/path_manager.h"
 
 using namespace std;
@@ -49,7 +49,7 @@ void BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::_begin(Binding& _parent_bin
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::_reset() {
     // Empty open and visited
-    queue<const MultiSourceMultiSourceSearchState*> empty;
+    queue<const MultiSourceSearchState *> empty;
     open.swap(empty);
     visited.clear();
     if (MULTIPLE_FINAL) {
@@ -93,7 +93,7 @@ bool BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::_next() {
 
         // Starting state is solution
         if (automaton.is_final_state[automaton.start_state]) {
-            auto reached_state = MultiSourceMultiSourceSearchState(automaton.start_state,
+            auto reached_state = MultiSourceSearchState(automaton.start_state,
                                              curr_first_node.second,
                                              nullptr,
                                              true,
@@ -130,7 +130,7 @@ bool BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::_next() {
 
 
 template <bool MULTIPLE_FINAL>
-const MultiSourceMultiSourceSearchState* BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::expand_neighbors(const MultiSourceMultiSourceSearchState& current_state) {
+const MultiSourceSearchState* BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::expand_neighbors(const MultiSourceSearchState& current_state) {
     // Check if this is the first time that current_state is explored
     if (iter->at_end()) {
         current_transition = 0;
@@ -148,12 +148,12 @@ const MultiSourceMultiSourceSearchState* BFSMultipleStartsNaiveParallel<MULTIPLE
 
         // Iterate over records until a final state is reached
         while (iter->next()) {
-            MultiSourceMultiSourceSearchState next_state(transition.to,
+            MultiSourceSearchState next_state(transition.to,
                                    ObjectId(iter->get_reached_node()),
                                    &current_state,
                                    transition.inverse,
                                    transition.type_id,
-                                   current_state->bfs_id);
+                                   current_state.bfs_id);
             auto visited_state = visited.insert(next_state);
 
             // If next state was visited for the first time
@@ -164,7 +164,7 @@ const MultiSourceMultiSourceSearchState* BFSMultipleStartsNaiveParallel<MULTIPLE
                 // Check if new path is solution
                 if (automaton.is_final_state[reached_state->automaton_state]) {
                     if (MULTIPLE_FINAL) {
-                        auto node_reached_final = reached_final.find(current_state->bfs_id, reached_state->node_id.id);
+                        auto node_reached_final = reached_final.find(current_state.bfs_id, reached_state->node_id.id);
                         if (node_reached_final == reached_final.end()) {
                             reached_final.insert(reached_state->node_id.id);
                             return reached_state.operator->();
