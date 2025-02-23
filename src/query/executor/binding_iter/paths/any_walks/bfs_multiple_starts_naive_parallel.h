@@ -14,6 +14,23 @@
 #include "query/parser/paths/automaton/rpq_automaton.h"
 #include "search_state_multiple_starts.h"
 
+// // For unordered set
+// struct objectid_hash
+// {
+//     std::size_t operator()(const ObjectId &o) const
+//     {
+//         return o.id;
+//     }
+// };
+// 
+// struct searchnodeid_hash
+// {
+//     std::size_t operator()(const std::pair<uint32_t, ObjectId> &p) const
+//     {
+//         return p.second.id ^ p.first;
+//     }
+// };
+
 namespace Paths
 {
     namespace Any
@@ -26,6 +43,7 @@ namespace Paths
         template <bool MULTIPLE_FINAL>
         class BFSMultipleStartsNaiveParallel : public BindingIter
         {
+            using SearchNodeId = std::pair<uint32_t, ObjectId>;
         private:
             // Attributes determined in the constructor
             VarId path_var;
@@ -50,12 +68,13 @@ namespace Paths
             uint_fast32_t current_transition;
 
             // true in the first call of next() and after a reset()
-            bool first_next = true;
-
+            std::queue<SearchNodeId> first_visit_q;
+            
+            // MATI reached_final should be a map starting_v -> [map of reached final states]
             // Template type for storing nodes reached with a final state
-            typename std::conditional<MULTIPLE_FINAL,
-                                      boost::unordered_flat_set<uint64_t>,
-                                      DummySet>::type reached_final;
+             typename std::conditional<MULTIPLE_FINAL,
+                                       boost::unordered_node_map<uint64_t, boost::unordered_flat_set<uint64_t>>
+                                       DummySet>::type reached_final;
 
         public:
             // Statistics
