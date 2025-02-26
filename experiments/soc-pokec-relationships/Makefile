@@ -2,6 +2,7 @@ SCRIPTS_DIR := $(abspath prepare_data/scripts)
 BUILD_DIR := $(abspath prepare_data/build)
 DATA_DIR := $(abspath prepare_data/data)
 RAW_DATA_DIR := $(abspath prepare_data/raw_data)
+MILLENIUMDB_BUILD_DIR := $(abspath ../../build/standard)
 
 all: prepare_pokec_pathfinder
 
@@ -31,6 +32,10 @@ add_starting_node_labels_to_pokec_pathfinder: $(DATA_DIR)/pokec_pathfinder.txt $
 	cat $(DATA_DIR)/starting_nodes_pokec_pathfinder.txt >> $(BUILD_DIR)/pokec_pathfinder_tmp.txt
 	cp $(BUILD_DIR)/pokec_pathfinder_tmp.txt $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.txt
 	@echo "Created file $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.txt sucessfully"
+
+create_pokec_db: $(DATA_DIR)
+	mkdir -p $(DATA_DIR)/databases
+	$(MILLENIUMDB_BUILD_DIR)/bin/mdb-import $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.txt $(DATA_DIR)/databases/pokec_db)
 
 clean:
 	@echo "Cleaning up build directory..."
