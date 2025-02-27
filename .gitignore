@@ -3,7 +3,7 @@
 
 **/build
 experiments/soc-pokec-relationships/prepare_data/raw_data
-experiments/soc-pokec-relationships/prepare_data/data
+experiments/soc-pokec-relationships/data
 
 .vscode
 delete_vscode_server.sh

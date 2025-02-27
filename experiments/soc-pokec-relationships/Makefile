@@ -1,7 +1,7 @@
 
 SCRIPTS_DIR := $(abspath prepare_data/scripts)
 BUILD_DIR := $(abspath prepare_data/build)
-DATA_DIR := $(abspath prepare_data/data)
+DATA_DIR := $(abspath data)
 RAW_DATA_DIR := $(abspath prepare_data/raw_data)
 MILLENIUMDB_BUILD_DIR := $(abspath ../../build/standard)
 
