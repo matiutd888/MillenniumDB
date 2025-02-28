@@ -1,0 +1,4 @@
+// Starting node is overwritten
+MATCH (P1)=[?p :Knows*]=>(?x)
+RETURN *
+LIMIT 10

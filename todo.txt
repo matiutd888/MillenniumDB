@@ -1,0 +1,4 @@
+Puscic eksperyment ./mdb_server experiments/soc-pokec-relationships/data/databases/pokec_data
+i potem potem
+
+bash scripts/query experiments/soc-pokec-relationships/queries/t01-limit-10.mql

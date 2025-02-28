@@ -1,3 +1,0 @@
-// Starting node is overwritten
-MATCH (Joe)=[?p :follows*/:works?]=>(?x)
-RETURN *
