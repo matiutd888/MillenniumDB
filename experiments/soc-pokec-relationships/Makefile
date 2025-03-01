@@ -43,3 +43,4 @@ $(DATA_DIR)/databases/pokec_db: $(DATA_DIR)/pokec_pathfinder_with_starting_nodes
 clean:
 	@echo "Cleaning up build directory..."
 	rm -rf $(BUILD_DIR)
+	rm -rf $(DATA_DIR)/*
