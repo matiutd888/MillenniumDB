@@ -3,6 +3,7 @@
 #include "graph_models/quad_model/quad_object_id.h"
 #include "system/path_manager.h"
 #include <iostream>
+#include "bfs_multiple_starts_common.h"
 
 using namespace std;
 using namespace Paths::Any;
@@ -18,7 +19,8 @@ void BFSMultipleStartsNaiveParallel<MULTIPLE_FINAL>::_begin(
   //////////////////////////////////////////////////////////////
   start_nodes.clear();
   bool interruption = false;
-  auto label_start = QuadObjectId::get_string("start").id;
+  std::string starting_label_str = get_starting_label_str();
+  auto label_start = QuadObjectId::get_string(starting_label_str).id;
   auto it = quad_model.label_node->get_range(&interruption, {label_start, 0},
                                              {label_start, UINT64_MAX});
 
