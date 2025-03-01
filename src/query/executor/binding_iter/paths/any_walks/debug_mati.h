@@ -35,7 +35,7 @@ static inline std::string getSimpleFunctionName(const std::string &fullName) {
 // std::string(FUNCTION_NAME).find("(")-std::string(FUNCTION_NAME).find(" ")-1))
 
 // Use __PRETTY_FUNCTION__ for GCC/Clang or __FUNCSIG__ for MSVC
-#define _debug_mati() std::cout << "MATI: " << SIMPLE_FUNCTION_NAME << ": "
+#define _debug_mati() if(false) std::cout << "MATI: " << SIMPLE_FUNCTION_NAME << ": "
 
-#define _debug_mati_simple() std::cout
+#define _debug_mati_simple() if(false) std::cout
 #endif // DEBUG_MATI_H
