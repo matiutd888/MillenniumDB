@@ -12,6 +12,8 @@
 #define FUNCTION_NAME __func__
 #endif
 
+#define MATI_DEBUG false
+
 // Extracts only the function name (without class/namespace)
 static inline std::string getSimpleFunctionName(const std::string &fullName) {
   size_t start =
@@ -35,7 +37,15 @@ static inline std::string getSimpleFunctionName(const std::string &fullName) {
 // std::string(FUNCTION_NAME).find("(")-std::string(FUNCTION_NAME).find(" ")-1))
 
 // Use __PRETTY_FUNCTION__ for GCC/Clang or __FUNCSIG__ for MSVC
-#define _debug_mati() if(false) std::cout << "MATI: " << SIMPLE_FUNCTION_NAME << ": "
+#define _debug_mati() if(MATI_DEBUG) std::cout << "MATI: " << SIMPLE_FUNCTION_NAME << ": "
 
-#define _debug_mati_simple() if(false) std::cout
+#define _debug_mati_simple() if(MATI_DEBUG) std::cout
+
+template <typename Container>
+inline void debug_print_container(const Container &c) {
+  for (const auto &elem : c) {
+    _debug_mati_simple() << elem << " ";
+  }
+}
+
 #endif // DEBUG_MATI_H

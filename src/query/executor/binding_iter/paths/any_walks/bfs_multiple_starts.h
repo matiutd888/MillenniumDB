@@ -84,6 +84,9 @@ private:
   std::queue<ObjectId> start_nodes_for_current_iteration;
   SearchNodeId node_for_current_iteration;
 
+  typename std::conditional<
+      MULTIPLE_FINAL, boost::unordered_flat_set<std::pair<int64_t, uint64_t>>,
+      DummyPairSet>::type reached_final;
 public:
   // Statistics
   uint_fast32_t idx_searches = 0;

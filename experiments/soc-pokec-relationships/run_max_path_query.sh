@@ -15,6 +15,5 @@ OUTPUT_FILE=$(mktemp --suffix=.mql)
 
 sed "s/MAX_PATH/$max_number_of_nodes_in_path/g" "$INPUT_FILE" > "$OUTPUT_FILE"
 
-cat $OUTPUT_FILE
 
 bash $MILLENIUM_DB_HOME_DIR/scripts/query $OUTPUT_FILE
