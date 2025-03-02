@@ -13,6 +13,7 @@
 #include <boost/unordered/unordered_node_map.hpp>
 #include <boost/unordered/unordered_node_set.hpp>
 
+#include "bfs_multiple_starts_common.h"
 #include "debug_mati.h"
 
 // For unordered set
@@ -45,7 +46,8 @@ private:
   VarId end;
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
-
+  Counter visited_nodes_counter;  
+  
   // where the results will be written, determined in begin()
   Binding *parent_binding;
 
@@ -95,7 +97,7 @@ public:
                     VarId end_nodes, RPQ_DFA automaton,
                     std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),
-        automaton(automaton), provider(std::move(provider)) {
+        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter") {
 
     _debug_mati() << "hello!" << std::endl;
   }

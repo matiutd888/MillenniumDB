@@ -43,6 +43,9 @@ static inline std::string getSimpleFunctionName(const std::string &fullName) {
 
 template <typename Container>
 inline void debug_print_container(const Container &c) {
+    if (!MATI_DEBUG) {
+        return;
+    }
   for (const auto &elem : c) {
     _debug_mati_simple() << elem << " ";
   }

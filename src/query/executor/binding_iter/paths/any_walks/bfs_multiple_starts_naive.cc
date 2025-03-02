@@ -5,7 +5,6 @@
 #include "graph_models/quad_model/quad_model.h"
 #include "graph_models/quad_model/quad_object_id.h"
 #include "system/path_manager.h"
-#include "bfs_multiple_starts_common.h"
 
 using namespace std;
 using namespace Paths::Any;
@@ -119,7 +118,7 @@ void BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_reset() {
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsNaive<MULTIPLE_FINAL>::_reset() {
-
+  visited_nodes_counter.reset(); 
   for (auto node : start_nodes) {
     ObjectId start_object_id =
         node.is_var() ? (*parent_binding)[node.get_var()] : node.get_OID();
@@ -139,6 +138,8 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::_next() {
     single_reset();
     return _next();
   } else {
+    std::cout << "Finished bfs with counter: " << visited_nodes_counter
+              << std::endl;
     return false;
   }
 }
@@ -171,6 +172,7 @@ const SearchState *BFSMultipleStartsNaive<MULTIPLE_FINAL>::expand_neighbors(
       SearchState next_state(transition.to, ObjectId(iter->get_reached_node()),
                              &current_state, transition.inverse,
                              transition.type_id);
+      visited_nodes_counter.increment();
       auto visited_state = visited.insert(next_state);
 
       // If next state was visited for the first time

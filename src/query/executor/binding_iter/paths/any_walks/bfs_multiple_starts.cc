@@ -1,6 +1,5 @@
 #include "bfs_multiple_starts.h"
 
-#include "bfs_multiple_starts_common.h"
 #include "graph_models/quad_model/quad_model.h"
 #include "graph_models/quad_model/quad_object_id.h"
 #include "system/path_manager.h"
@@ -53,6 +52,7 @@ void BFSMultipleStarts<MULTIPLE_FINAL>::_begin(Binding &_parent_binding) {
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStarts<MULTIPLE_FINAL>::_reset() {
   // Empty open and visited
+  visited_nodes_counter.reset();
   bfses_to_be_visited.clear();
   bfses_to_be_visited_next.clear();
   seen.clear();
@@ -127,6 +127,7 @@ template <bool MULTIPLE_FINAL> bool BFSMultipleStarts<MULTIPLE_FINAL>::_next() {
     bfses_to_be_visited = bfses_to_be_visited_next;
     bfses_to_be_visited_next.clear();
   }
+  std::cout << "Finished bfs with counter: " << visited_nodes_counter << std::endl;
   return false;
 }
 
@@ -170,6 +171,8 @@ BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbors(
     return ms_search_state;
   }
 
+  auto bfses_to_be_visited_by_current_state =
+      bfses_to_be_visited[current_state_id];
   // Iterate over the remaining transitions of current_state
   // Don't start from the beginning, resume where it left thanks to
   // current_transition and iter (pipeline)
@@ -181,15 +184,14 @@ BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbors(
 
     // Iterate over records until a final state is reached
     while (iter->next()) {
-
       _debug_mati() << "current_state_id: " << current_state_id.first << ", "
                     << current_state_id.second << std::endl;
-      auto bfses_to_be_visited_by_current_state =
-          bfses_to_be_visited[current_state_id];
 
       _debug_mati() << "bfses_to_be_visited_by_current_state: ";
       debug_print_container(bfses_to_be_visited_by_current_state);
       _debug_mati_simple() << std::endl;
+
+      visited_nodes_counter.increment();
 
       SearchNodeId new_node_id = {transition.to,
                                   ObjectId(iter->get_reached_node())};
@@ -212,7 +214,7 @@ BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbors(
       _debug_mati() << "difference: ";
       debug_print_container(difference);
       _debug_mati_simple() << std::endl;
-
+      _debug_mati() << "difference size: " << difference.size() << std::endl;
       if (!difference.empty()) {
         bfses_to_be_visited_next[new_node_id].insert(difference.begin(),
                                                      difference.end());
