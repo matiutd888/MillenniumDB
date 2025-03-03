@@ -1,6 +1,15 @@
 # Created by https://www.gitignore.io/api/c++
 # Edit at https://www.gitignore.io/?templates=c++
 
+**/build
+experiments/soc-pokec-relationships/prepare_data/raw_data
+experiments/soc-pokec-relationships/data
+experiments/soc-pokec-relationships/results
+
+.vscode
+delete_vscode_server.sh
+.devcontainer
+
 obj/*
 bin/*
 build/

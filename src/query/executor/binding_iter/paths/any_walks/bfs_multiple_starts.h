@@ -13,6 +13,7 @@
 #include <boost/unordered/unordered_node_map.hpp>
 #include <boost/unordered/unordered_node_set.hpp>
 
+#include "bfs_multiple_starts_common.h"
 #include "debug_mati.h"
 
 // For unordered set
@@ -45,7 +46,8 @@ private:
   VarId end;
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
-
+  Counter visited_nodes_counter;  
+  
   // where the results will be written, determined in begin()
   Binding *parent_binding;
 
@@ -84,6 +86,9 @@ private:
   std::queue<ObjectId> start_nodes_for_current_iteration;
   SearchNodeId node_for_current_iteration;
 
+  typename std::conditional<
+      MULTIPLE_FINAL, boost::unordered_flat_set<std::pair<int64_t, uint64_t>>,
+      DummyPairSet>::type reached_final;
 public:
   // Statistics
   uint_fast32_t idx_searches = 0;
@@ -92,7 +97,7 @@ public:
                     VarId end_nodes, RPQ_DFA automaton,
                     std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),
-        automaton(automaton), provider(std::move(provider)) {
+        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter") {
 
     _debug_mati() << "hello!" << std::endl;
   }

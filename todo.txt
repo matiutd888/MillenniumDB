@@ -1,0 +1,9 @@
+Nastepny krok to po prostu puszczenie eksperymentu (najlepiej wersji bfs naive) i sprawdzic czy sie wywala nam program. zahac sie metrykami potem.
+Puscic eksperyment
+```
+export MS_STRATEGY="naive" &&  ./mdb_server experiments/soc-pokec-relationships/data/databases/pokec_data
+```
+i potem
+```
+bash scripts/query experiments/soc-pokec-relationships/queries/t01-limit-10.mql
+```

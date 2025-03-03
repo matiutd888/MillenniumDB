@@ -19,7 +19,8 @@ void BFSMultipleStartsNaive<MULTIPLE_FINAL>::_begin(Binding &_parent_binding) {
   //////////////////////////////////////////////////////////////
   start_nodes.clear();
   bool interruption = false;
-  auto label_start = QuadObjectId::get_string("start").id;
+  std::string starting_label_str = get_starting_label_str();
+  auto label_start = QuadObjectId::get_string(starting_label_str).id;
   auto it = quad_model.label_node->get_range(&interruption, {label_start, 0},
                                              {label_start, UINT64_MAX});
 
@@ -117,7 +118,7 @@ void BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_reset() {
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsNaive<MULTIPLE_FINAL>::_reset() {
-
+  visited_nodes_counter.reset(); 
   for (auto node : start_nodes) {
     ObjectId start_object_id =
         node.is_var() ? (*parent_binding)[node.get_var()] : node.get_OID();
@@ -137,6 +138,8 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::_next() {
     single_reset();
     return _next();
   } else {
+    std::cout << "Finished bfs with counter: " << visited_nodes_counter
+              << std::endl;
     return false;
   }
 }
@@ -169,6 +172,7 @@ const SearchState *BFSMultipleStartsNaive<MULTIPLE_FINAL>::expand_neighbors(
       SearchState next_state(transition.to, ObjectId(iter->get_reached_node()),
                              &current_state, transition.inverse,
                              transition.type_id);
+      visited_nodes_counter.increment();
       auto visited_state = visited.insert(next_state);
 
       // If next state was visited for the first time

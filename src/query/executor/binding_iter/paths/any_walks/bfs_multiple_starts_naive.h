@@ -8,6 +8,7 @@
 #include <boost/unordered/unordered_node_set.hpp>
 
 #include "query/executor/binding_iter.h"
+#include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts.h"
 #include "query/executor/binding_iter/paths/any_walks/search_state.h"
 #include "query/executor/binding_iter/paths/index_provider/path_index.h"
 #include "query/parser/paths/automaton/rpq_automaton.h"
@@ -32,6 +33,7 @@ private:
   VarId end;
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
+  Counter visited_nodes_counter;  
 
   std::queue<ObjectId> start_nodes_q;
   ObjectId current_start_node;
@@ -65,7 +67,7 @@ public:
                          RPQ_DFA automaton,
                          std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end),
-        automaton(automaton), provider(std::move(provider)) {}
+        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter") {}
 
   void accept_visitor(BindingIterVisitor &visitor) override;
   void _begin(Binding &parent_binding) override;
