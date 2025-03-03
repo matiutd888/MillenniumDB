@@ -10,9 +10,9 @@ ms_strategy="$1"
 ms_start_node_label="$2"
 db_path="$3"
 
-valid_ms_strategy=("naive" "normal" "naive_parallel")
+valid_ms_strategy=("naive" "normal" "naive_parallel", "optimized")
 if [[ ! " ${valid_ms_strategy[@]} " =~ " ${ms_strategy} " ]]; then
-    echo "Error: ms_strategy must be one of [naive, normal, naive_parallel]"
+    echo "Error: ms_strategy must be one of [naive, normal, naive_parallel, optimized]"
     exit 1
 fi
 

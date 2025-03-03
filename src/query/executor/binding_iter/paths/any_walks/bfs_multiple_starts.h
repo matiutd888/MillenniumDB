@@ -16,16 +16,6 @@
 #include "bfs_multiple_starts_common.h"
 #include "debug_mati.h"
 
-// For unordered set
-struct objectid_hash {
-  std::size_t operator()(const ObjectId &o) const { return o.id; }
-};
-
-struct searchnodeid_hash {
-  std::size_t operator()(const std::pair<uint32_t, ObjectId> &p) const {
-    return p.second.id ^ p.first;
-  }
-};
 namespace Paths {
 namespace Any {
 

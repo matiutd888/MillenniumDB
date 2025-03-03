@@ -220,6 +220,8 @@ public:
     virtual void visit(Paths::Any::BFSEnum<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStarts<false>&)                = 0;
     virtual void visit(Paths::Any::BFSMultipleStarts<true>&)                 = 0;
+    virtual void visit(Paths::Any::BFSMultipleStartsOptimized<false>&)                = 0;
+    virtual void visit(Paths::Any::BFSMultipleStartsOptimized<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<false>&)                = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaiveParallel<true>&)                 = 0;
