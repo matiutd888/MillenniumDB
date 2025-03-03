@@ -30,6 +30,7 @@ class BFSMultipleStartsOptimized : public BindingIter
   using SearchNodeId = std::pair<uint32_t, ObjectId>;
 
 private:
+  using bfs_id_bit_set = uint64_t;
   // Attributes determined in the constructor
   VarId path_var;
   std::vector<Id> start_nodes;

@@ -131,7 +131,7 @@ template <bool MULTIPLE_FINAL> bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::
   return false;
 }
 
-boost::unordered_flat_set<ObjectId, objectid_hash>
+static boost::unordered_flat_set<ObjectId, objectid_hash>
 set_difference(const boost::unordered_node_set<ObjectId, objectid_hash> &s1,
                const boost::unordered_node_set<ObjectId, objectid_hash> &s2) {
   boost::unordered_flat_set<ObjectId, objectid_hash> difference;
