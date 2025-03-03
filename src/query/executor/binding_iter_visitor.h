@@ -107,6 +107,7 @@ namespace Paths {
         class BFSCheck;
         template <bool> class BFSEnum;
         template <bool> class BFSMultipleStarts;
+        template <bool> class BFSMultipleStartsOptimized;
         template <bool> class BFSMultipleStartsNaive;
         template <bool> class BFSMultipleStartsNaiveParallel;
         class DFSCheck;
