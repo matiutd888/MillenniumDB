@@ -1,6 +1,22 @@
+#ifndef BFS_MULTIPLE_STARTS_COMMON_H
+#define BFS_MULTIPLE_STARTS_COMMON_H
+
+
+#include "graph_models/object_id.h"
 #include <cstdlib>
 #include <string>
 #include <iostream>
+
+// For unordered set
+struct objectid_hash {
+  std::size_t operator()(const ObjectId &o) const { return o.id; }
+};
+
+struct searchnodeid_hash {
+  std::size_t operator()(const std::pair<uint32_t, ObjectId> &p) const {
+    return p.second.id ^ p.first;
+  }
+};
 
 inline std::string get_starting_label_str() {
   char *ms_start_label_c_str = std::getenv("MS_START_LABEL");
@@ -40,3 +56,5 @@ public:
         return os;
     }
 };
+
+#endif
