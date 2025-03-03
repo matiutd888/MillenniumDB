@@ -31,6 +31,7 @@ class BFSMultipleStartsOptimized : public BindingIter
 
 private:
   using bfs_id_bit_set = uint64_t;
+  static constexpr int  NUM_CONCURRENT_BFS = sizeof(bfs_id_bit_set);
   // Attributes determined in the constructor
   VarId path_var;
   std::vector<Id> start_nodes;
@@ -42,14 +43,23 @@ private:
   // where the results will be written, determined in begin()
   Binding *parent_binding;
 
-  boost::unordered_node_map<
-      ObjectId,
-      boost::unordered_node_map<SearchNodeId, MultiSourceSearchState,
-                                searchnodeid_hash>,
-      objectid_hash>
-      seen;
+ 
+  // TODO will have to do assignment using this
+  // Try to optyimize the for loop using openmp
+  // https://chatgpt.com/share/67c6385f-179c-800b-9b8d-8d6ec423dcf2
+  // TODO also think about memory overhead. how to avoid it?
+  boost::unordered_node_map<SearchNodeId, std::array<SearchState, NUM_CONCURRENT_BFS>> seen_optimized;
+
+  // boost::unordered_node_map<
+  //     ObjectId,
+  //     boost::unordered_node_map<SearchNodeId, SearchState,
+  //                               searchnodeid_hash>,
+  //     objectid_hash>
+  //     seen;
+
+
   boost::unordered_node_map<SearchNodeId,
-                            boost::unordered_node_set<ObjectId, objectid_hash>,
+                            bfs_id_bit_set,
                             searchnodeid_hash>
       bfss_that_reached_given_node;
 
@@ -57,11 +67,11 @@ private:
   // (bfs ids) can be taken from `bfss_that_reached_given_node`. hmm. are the
   // searchNodeIds useful at all?
   boost::unordered_node_map<SearchNodeId,
-                            boost::unordered_node_set<ObjectId, objectid_hash>,
+                            bfs_id_bit_set,
                             searchnodeid_hash>
       bfses_to_be_visited;
   boost::unordered_node_map<SearchNodeId,
-                            boost::unordered_node_set<ObjectId, objectid_hash>,
+                            bfs_id_bit_set,
                             searchnodeid_hash>
       bfses_to_be_visited_next;
 
@@ -74,8 +84,7 @@ private:
   // The index of the transition being currently explored
   uint_fast32_t current_transition;
 
-  std::queue<ObjectId> start_nodes_for_current_iteration;
-  SearchNodeId node_for_current_iteration;
+  std::queue<*SearchState> search_states_for_current_iteration;
 
   typename std::conditional<
       MULTIPLE_FINAL, boost::unordered_flat_set<std::pair<int64_t, uint64_t>>,
