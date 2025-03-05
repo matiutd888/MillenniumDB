@@ -1,8 +1,8 @@
 #include "bfs_multiple_starts_optimized.h"
-
 #include "graph_models/quad_model/quad_model.h"
 #include "graph_models/quad_model/quad_object_id.h"
 #include "system/path_manager.h"
+#include <algorithm>
 #include <boost/range/algorithm/set_algorithm.hpp>
 #include <boost/unordered_set.hpp>
 #include <iostream>
@@ -11,7 +11,8 @@ using namespace std;
 using namespace Paths::Any;
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(Binding &_parent_binding) {
+void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(
+    Binding &_parent_binding) {
   parent_binding = &_parent_binding;
   // first_next = true;
 
@@ -36,54 +37,74 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(Binding &_parent_binding
   for (auto node : start_nodes) {
     ObjectId start_object_id =
         node.is_var() ? (*parent_binding)[node.get_var()] : node.get_OID();
-    SearchNodeId start_node_id{automaton.start_state, start_object_id};
-    bfses_to_be_visited[start_node_id] = {start_object_id};
+    bfss_ordered.push_back(start_object_id);
+  }
+  num_chunks = (bfss_ordered.size() - 1) / NUM_CONCURRENT_BFS + 1;
 
-    seen[start_object_id] = {
-        {start_node_id,
-         MultiSourceSearchState(automaton.start_state, start_object_id, nullptr,
-                                true, ObjectId::get_null(), start_object_id)}};
-    bfss_that_reached_given_node[start_node_id] = {start_object_id};
-    first_visit_q.push(start_node_id);
+  current_bfs_chunk = 0;
+  set_new_bfs_chunk_and_reset();
+}
+
+template <bool MULTIPLE_FINAL>
+void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::prepare_structures_for_next_chunk_processing() {
+  for (int bfs_index = 0; bfs_index < num_nodes_in_current_chunk; bfs_index++) {
+    ObjectId start_object_id =
+        bfss_ordered[bfs_index + current_bfs_chunk * NUM_CONCURRENT_BFS];
+
+    SearchNodeId start_node_id{automaton.start_state, start_object_id};
+    bfses_to_be_visited[start_node_id] = 1 << bfs_index;
+    search_states[bfs_index] = {
+        {start_node_id, SearchState(automaton.start_state, start_object_id,
+                                    nullptr, true, ObjectId::get_null())}};
+    bfss_that_reached_given_node[start_node_id] = 1 << bfs_index;
+    first_visit_q.push(std::make_pair(start_node_id, bfs_index));
   }
   iter = make_unique<NullIndexIterator>();
+}
+
+template <bool MULTIPLE_FINAL>
+void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
+  assert(current_bfs_chunk < num_chunks);
+  num_nodes_in_current_chunk =
+      std::min(NUM_CONCURRENT_BFS,
+               bfss_ordered.size() - current_bfs_chunk * NUM_CONCURRENT_BFS);
+  single_reset();
+}
+
+template <bool MULTIPLE_FINAL>
+void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_reset() {
+  for (int i = 0; i < NUM_CONCURRENT_BFS; i++) {
+    search_states[i].clear();
+  }
+  bfss_that_reached_given_node.clear();
+  bfses_to_be_visited.clear();
+  bfses_to_be_visited_next.clear();
+
+  visit_q = {};
+  first_visit_q = {};
+
+  if (MULTIPLE_FINAL) {
+    reached_final.clear();
+  }
+
+  prepare_structures_for_next_chunk_processing();
 }
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_reset() {
   // Empty open and visited
   visited_nodes_counter.reset();
-  bfses_to_be_visited.clear();
-  bfses_to_be_visited_next.clear();
-  seen.clear();
-  bfss_that_reached_given_node.clear();
-  visit_q = {};
-  if (MULTIPLE_FINAL) {
-    reached_final.clear();
-  }
-  first_visit_q = {};
-
-  for (auto node : start_nodes) {
-    ObjectId start_object_id =
-        node.is_var() ? (*parent_binding)[node.get_var()] : node.get_OID();
-    SearchNodeId start_node_id{automaton.start_state, start_object_id};
-    bfses_to_be_visited[start_node_id] = {start_object_id};
-
-    seen[start_object_id] = {
-        {start_node_id,
-         MultiSourceSearchState(automaton.start_state, start_object_id, nullptr,
-                                true, ObjectId::get_null(), start_object_id)}};
-    bfss_that_reached_given_node[start_node_id] = {start_object_id};
-    first_visit_q.push(start_node_id);
-  }
-  iter = make_unique<NullIndexIterator>();
+  current_bfs_chunk = 0;
+  set_new_bfs_chunk_and_reset();
 }
 
-template <bool MULTIPLE_FINAL> bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
+template <bool MULTIPLE_FINAL>
+bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
   // Check if first state is final
   while (!first_visit_q.empty()) {
-    SearchNodeId curr_first_node = first_visit_q.front();
+    auto first_visit_q_top = first_visit_q.front();
     first_visit_q.pop();
+    SearchNodeId curr_first_node = first_visit_q_top.first;
 
     if (provider->node_exists(curr_first_node.second.id)) {
       visit_q.push(curr_first_node);
@@ -92,8 +113,7 @@ template <bool MULTIPLE_FINAL> bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::
           reached_final.insert(
               {curr_first_node.second.id, curr_first_node.second.id});
         }
-        auto pointer_to_reached_state =
-            &seen[curr_first_node.second].find(curr_first_node)->second;
+        auto pointer_to_reached_state = &search_states[first_visit_q_top.second].find(curr_first_node)->second;
         auto path_id =
             path_manager.set_path(pointer_to_reached_state, path_var);
         parent_binding->add(path_var, path_id);
@@ -127,7 +147,8 @@ template <bool MULTIPLE_FINAL> bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::
     bfses_to_be_visited = bfses_to_be_visited_next;
     bfses_to_be_visited_next.clear();
   }
-  std::cout << "Finished bfs with counter: " << visited_nodes_counter << std::endl;
+  std::cout << "Finished bfs with counter: " << visited_nodes_counter
+            << std::endl;
   return false;
 }
 
