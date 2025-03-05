@@ -1,3 +1,4 @@
+#pragma once
 #include "bfs_multiple_starts_optimized.h"
 #include "graph_models/quad_model/quad_model.h"
 #include "graph_models/quad_model/quad_object_id.h"
@@ -9,6 +10,8 @@
 
 using namespace std;
 using namespace Paths::Any;
+
+void debug_print_bfs_id_bit_set(uint64_t bfs_id_bit_set) {}
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(
@@ -46,7 +49,8 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::prepare_structures_for_next_chunk_processing() {
+void BFSMultipleStartsOptimized<
+    MULTIPLE_FINAL>::prepare_structures_for_next_chunk_processing() {
   for (int bfs_index = 0; bfs_index < num_nodes_in_current_chunk; bfs_index++) {
     ObjectId start_object_id =
         bfss_ordered[bfs_index + current_bfs_chunk * NUM_CONCURRENT_BFS];
@@ -68,6 +72,8 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
   num_nodes_in_current_chunk =
       std::min(NUM_CONCURRENT_BFS,
                bfss_ordered.size() - current_bfs_chunk * NUM_CONCURRENT_BFS);
+  bit_mask_for_current_chunk = (1 << num_nodes_in_current_chunk) - 1;
+  assert(bit_mask_for_current_chunk > 0);
   single_reset();
 }
 
@@ -113,7 +119,9 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
           reached_final.insert(
               {curr_first_node.second.id, curr_first_node.second.id});
         }
-        auto pointer_to_reached_state = &search_states[first_visit_q_top.second].find(curr_first_node)->second;
+        auto pointer_to_reached_state = &search_states[first_visit_q_top.second]
+                                             .find(curr_first_node)
+                                             ->second;
         auto path_id =
             path_manager.set_path(pointer_to_reached_state, path_var);
         parent_binding->add(path_var, path_id);
@@ -152,21 +160,8 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
   return false;
 }
 
-static boost::unordered_flat_set<ObjectId, objectid_hash>
-set_difference(const boost::unordered_node_set<ObjectId, objectid_hash> &s1,
-               const boost::unordered_node_set<ObjectId, objectid_hash> &s2) {
-  boost::unordered_flat_set<ObjectId, objectid_hash> difference;
-  for (const auto &it : s1) {
-    if (s2.find(it) == s2.end()) {
-      difference.insert(it);
-    }
-  }
-  return difference;
-}
-
 template <bool MULTIPLE_FINAL>
-const MultiSourceSearchState *
-BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
+const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
     const SearchNodeId &current_state_id) {
   // Check if this is the first time that current_state is explored
   if (iter->at_end()) {
@@ -179,17 +174,13 @@ BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
     set_iter(current_state_id);
   }
 
-  while (!start_nodes_for_current_iteration.empty()) {
-    auto bfs_id = start_nodes_for_current_iteration.front();
-    _debug_mati() << "start nodes for current iteration not empty! "
-                     "start_nodes_for_current_iteration.size() = "
-                  << start_nodes_for_current_iteration.size()
-                  << ", bfs_id = " << bfs_id << std::endl;
-    start_nodes_for_current_iteration.pop();
-    auto ms_search_state_it = seen[bfs_id].find(node_for_current_iteration);
-    assert(ms_search_state_it != seen[bfs_id].end());
-    auto ms_search_state = &(ms_search_state_it->second);
-    return ms_search_state;
+  while (!search_states_for_current_iteration.empty()) {
+    _debug_mati() << "search states for current iteration not empty! "
+                     "search states_for_current_iteration.size() = "
+                  << search_states_for_current_iteration.size();
+    auto ret = search_states_for_current_iteration.front();
+    search_states_for_current_iteration.pop();
+    return ret;
   }
 
   auto bfses_to_be_visited_by_current_state =
@@ -209,7 +200,7 @@ BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
                     << current_state_id.second << std::endl;
 
       _debug_mati() << "bfses_to_be_visited_by_current_state: ";
-      debug_print_container(bfses_to_be_visited_by_current_state);
+      debug_print_bfs_id_bit_set(bfses_to_be_visited_by_current_state);
       _debug_mati_simple() << std::endl;
 
       visited_nodes_counter.increment();
@@ -221,35 +212,39 @@ BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
       auto bfses_that_reached_the_new_state =
           bfss_that_reached_given_node[new_node_id];
 
-      _debug_mati() << "bfses_that_reached_the_new_state: ";
-      debug_print_container(bfses_that_reached_the_new_state);
-      _debug_mati_simple() << std::endl;
+      // _debug_mati() << "bfses_that_reached_the_new_state: ";
+      // debug_print_container(bfses_that_reached_the_new_state);
+      // _debug_mati_simple() << std::endl;
 
       //            boost::set_difference(bfses_to_be_visited_by_current_state,
       //            bfses_that_reached_the_new_state, std::inserter(difference,
       //            difference.end()));
 
-      boost::unordered_flat_set<ObjectId, objectid_hash> difference =
-          set_difference(bfses_to_be_visited_by_current_state,
-                         bfses_that_reached_the_new_state);
+      uint64_t difference = bfses_to_be_visited_by_current_state &
+                        ~bfses_that_reached_the_new_state;
+      difference &= bit_mask_for_current_chunk; 
+      
+
       _debug_mati() << "difference: ";
-      debug_print_container(difference);
+      debug_print_bfs_id_bit_set(difference);
       _debug_mati_simple() << std::endl;
       _debug_mati() << "difference size: " << difference.size() << std::endl;
-      if (!difference.empty()) {
-        bfses_to_be_visited_next[new_node_id].insert(difference.begin(),
-                                                     difference.end());
-        for (const auto &bfs_to_visit_new_state_next : difference) {
-          MultiSourceSearchState s(new_node_id.first, new_node_id.second,
-                                   &(seen[bfs_to_visit_new_state_next]
-                                         .find(current_state_id)
-                                         ->second),
-                                   transition.inverse, transition.type_id,
-                                   bfs_to_visit_new_state_next);
-          seen[bfs_to_visit_new_state_next].insert({new_node_id, s});
-          bfss_that_reached_given_node[new_node_id].insert(
-              bfs_to_visit_new_state_next);
-        }
+      if (difference > 0) {
+        bfses_to_be_visited_next[new_node_id] |= difference;
+        
+        
+        // TODO MATI have to fix this loop next
+        // for (const auto &bfs_to_visit_new_state_next : difference) {
+        //   MultiSourceSearchState s(new_node_id.first, new_node_id.second,
+        //                            &(seen[bfs_to_visit_new_state_next]
+        //                                  .find(current_state_id)
+        //                                  ->second),
+        //                            transition.inverse, transition.type_id,
+        //                            bfs_to_visit_new_state_next);
+        //   seen[bfs_to_visit_new_state_next].insert({new_node_id, s});
+        //   bfss_that_reached_given_node[new_node_id].insert(
+        //       bfs_to_visit_new_state_next);
+        // }
         // Check if new path is solution
         if (automaton.is_final_state[new_node_id.first]) {
 

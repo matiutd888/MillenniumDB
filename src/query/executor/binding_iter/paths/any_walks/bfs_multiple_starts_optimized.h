@@ -51,6 +51,7 @@ private:
   int current_bfs_chunk = 0;
   int num_nodes_in_current_chunk = 0; 
   int num_chunks = 0;
+  uint64_t bit_mask_for_current_chunk;
   // -------------
 
   // Maybe can tell to unroll loop:
@@ -126,7 +127,7 @@ public:
   bool single_next() ;
   void prepare_structures_for_next_chunk_processing();
   // Expand neighbors from current state
-  const MultiSourceSearchState *
+  const SearchState *
   expand_neighbors(const SearchNodeId &current_state);
 
   void assign_nulls() override {
