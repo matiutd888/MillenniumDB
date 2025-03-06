@@ -98,8 +98,8 @@ private:
   std::queue<SearchState*> search_states_for_current_iteration;
 
   typename std::conditional<
-      MULTIPLE_FINAL, boost::unordered_flat_set<std::pair<int64_t, uint64_t>>,
-      DummyPairSet>::type reached_final;
+      MULTIPLE_FINAL, boost::unordered_flat_set<uint64_t>,
+      DummySet>::type reached_final[NUM_CONCURRENT_BFS];
   
 
 

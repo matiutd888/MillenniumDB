@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <boost/range/algorithm/set_algorithm.hpp>
 #include <boost/unordered_set.hpp>
+#include <immintrin.h>
 #include <iostream>
 
 using namespace std;
@@ -90,7 +91,9 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_reset() {
   first_visit_q = {};
 
   if (MULTIPLE_FINAL) {
-    reached_final.clear();
+    for (int i = 0; i < NUM_CONCURRENT_BFS; i++) {
+      reached_final[i].clear();
+    }
   }
 
   prepare_structures_for_next_chunk_processing();
@@ -221,73 +224,57 @@ const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
       //            difference.end()));
 
       uint64_t difference = bfses_to_be_visited_by_current_state &
-                        ~bfses_that_reached_the_new_state;
-      difference &= bit_mask_for_current_chunk; 
-      
+                            ~bfses_that_reached_the_new_state;
+      difference &= bit_mask_for_current_chunk;
 
       _debug_mati() << "difference: ";
       debug_print_bfs_id_bit_set(difference);
       _debug_mati_simple() << std::endl;
-      _debug_mati() << "difference size: " << difference.size() << std::endl;
+      // _debug_mati() << "difference size: " << difference.size() << std::endl;
       if (difference > 0) {
         bfses_to_be_visited_next[new_node_id] |= difference;
-        
-        
-        // TODO MATI have to fix this loop next
-        // for (const auto &bfs_to_visit_new_state_next : difference) {
-        //   MultiSourceSearchState s(new_node_id.first, new_node_id.second,
-        //                            &(seen[bfs_to_visit_new_state_next]
-        //                                  .find(current_state_id)
-        //                                  ->second),
-        //                            transition.inverse, transition.type_id,
-        //                            bfs_to_visit_new_state_next);
-        //   seen[bfs_to_visit_new_state_next].insert({new_node_id, s});
-        //   bfss_that_reached_given_node[new_node_id].insert(
-        //       bfs_to_visit_new_state_next);
-        // }
-        // Check if new path is solution
-        if (automaton.is_final_state[new_node_id.first]) {
+        bfss_that_reached_given_node[new_node_id] |= difference;
 
+        bool is_final = automaton.is_final_state[new_node_id.first];
+        if (is_final) {
+          search_states_for_current_iteration = {};
           _debug_mati() << "new state is final state " << std::endl;
-          _debug_mati() << "start_nodes_for_current_iteration: size() = "
-                        << start_nodes_for_current_iteration.size()
-                        << std::endl;
-          // TODO think if I should be clearing this or not...
-          std::queue<ObjectId> empty_queue;
-          std::swap(start_nodes_for_current_iteration, empty_queue);
-          for (const auto &bfs_to_visit_new_state_next : difference) {
+        }
+
+#pragma unroll
+        for (bfs_id_bit_set bitmask_it = difference; bitmask_it;
+             bitmask_it &= bitmask_it - 1) {
+          int bfs_index = __builtin_ctz(bitmask_it);
+          auto previous =
+              &(search_states[bfs_index].find(current_state_id)->second);
+          SearchState s(new_node_id.first, new_node_id.second, previous,
+                        transition.inverse, transition.type_id);
+          auto insertion_result =
+              search_states[bfs_index].insert({new_node_id, s});
+
+          if (is_final) {
             if (MULTIPLE_FINAL) {
-              auto start_end_destination_node_ids_pair = std::make_pair(
-                  bfs_to_visit_new_state_next.id, new_node_id.second.id);
-              auto node_reached_final =
-                  reached_final.find(start_end_destination_node_ids_pair);
-              if (node_reached_final == reached_final.end()) {
-                reached_final.insert(start_end_destination_node_ids_pair);
-                start_nodes_for_current_iteration.push(
-                    bfs_to_visit_new_state_next);
+              if (reached_final[bfs_index].find(new_node_id.second.id) !=
+                  reached_final[bfs_index].end()) {
+                reached_final[bfs_index].insert(new_node_id.second.id);
+                search_states_for_current_iteration.push(
+                    &insertion_result.first->second);
               }
             } else {
-              start_nodes_for_current_iteration.push(
-                  bfs_to_visit_new_state_next);
+              search_states_for_current_iteration.push(
+                  &insertion_result.first->second);
             }
           }
-          if (!start_nodes_for_current_iteration.empty()) {
-            _debug_mati() << "old node_for_current_iteration "
-                          << node_for_current_iteration.first << ", "
-                          << node_for_current_iteration.second << std::endl;
-            node_for_current_iteration = new_node_id;
-            _debug_mati() << "new node_for_current_iteration "
-                          << node_for_current_iteration.first << ", "
-                          << node_for_current_iteration.second << std::endl;
-            {
-              auto bfs_id = start_nodes_for_current_iteration.front();
-              start_nodes_for_current_iteration.pop();
-              auto ms_search_state_it =
-                  seen[bfs_id].find(node_for_current_iteration);
-              assert(ms_search_state_it != seen[bfs_id].end());
-              auto ms_search_state = &(ms_search_state_it->second);
-              return ms_search_state;
-            }
+        }
+
+        if (is_final) {
+          if (!search_states_for_current_iteration.empty()) {
+            _debug_mati() << "search states for current iteration not empty! "
+                             "search states_for_current_iteration.size() = "
+                          << search_states_for_current_iteration.size();
+            auto ret = search_states_for_current_iteration.front();
+            search_states_for_current_iteration.pop();
+            return ret;
           }
         }
       }
