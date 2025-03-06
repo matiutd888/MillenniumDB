@@ -1,4 +1,3 @@
-#pragma once
 #include "bfs_multiple_starts_optimized.h"
 #include "graph_models/quad_model/quad_model.h"
 #include "graph_models/quad_model/quad_object_id.h"
@@ -71,8 +70,8 @@ template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
   assert(current_bfs_chunk < num_chunks);
   num_nodes_in_current_chunk =
-      std::min(NUM_CONCURRENT_BFS,
-               bfss_ordered.size() - current_bfs_chunk * NUM_CONCURRENT_BFS);
+      std::min(NUM_CONCURRENT_BFS, (int)bfss_ordered.size() -
+                                       current_bfs_chunk * NUM_CONCURRENT_BFS);
   bit_mask_for_current_chunk = (1 << num_nodes_in_current_chunk) - 1;
   assert(bit_mask_for_current_chunk > 0);
   single_reset();
@@ -119,8 +118,8 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
       visit_q.push(curr_first_node);
       if (automaton.is_final_state[automaton.start_state]) {
         if (MULTIPLE_FINAL) {
-          reached_final.insert(
-              {curr_first_node.second.id, curr_first_node.second.id});
+          reached_final[first_visit_q_top.second].insert(
+              curr_first_node.second.id);
         }
         auto pointer_to_reached_state = &search_states[first_visit_q_top.second]
                                              .find(curr_first_node)
