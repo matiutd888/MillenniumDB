@@ -34,7 +34,7 @@ class BFSMultipleStartsOptimized : public BindingIter
 
 private:
   using bfs_id_bit_set = uint64_t;
-  static constexpr int NUM_CONCURRENT_BFS = sizeof(bfs_id_bit_set);
+  static constexpr int NUM_CONCURRENT_BFS = sizeof(bfs_id_bit_set) * 8;
   // Attributes determined in the constructor
   VarId path_var;
   std::vector<Id> start_nodes;
