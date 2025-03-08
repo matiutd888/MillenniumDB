@@ -278,7 +278,7 @@ const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
           _debug_mati() << "new state is final state " << std::endl;
         }
 
-        // #pragma unroll
+#pragma GCC unroll 64
         for (bfs_id_bit_set bitmask_it = difference; bitmask_it;
              bitmask_it &= bitmask_it - 1) {
           _debug_mati() << "bitmask_it: "

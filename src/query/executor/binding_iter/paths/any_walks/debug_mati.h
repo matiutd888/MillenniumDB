@@ -12,7 +12,7 @@
 #define FUNCTION_NAME __func__
 #endif
 
-#define MATI_DEBUG true 
+#define MATI_DEBUG false 
 
 // Extracts only the function name (without class/namespace)
 static inline std::string getSimpleFunctionName(const std::string &fullName) {
