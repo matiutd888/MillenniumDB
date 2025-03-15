@@ -18,7 +18,6 @@
 #include "bfs_multiple_starts_common.h"
 #include "debug_mati.h"
 
-
 namespace Paths {
 namespace Any {
 
@@ -27,7 +26,7 @@ BFSMultipleStartsOptimized returns a single path to all
 reachable nodes from a starting node, using BFS.
 */
 template <bool MULTIPLE_FINAL>
-class BFSMultipleStartsOptimized : public BindingIter
+class BFSMultipleStartsOptimizedNoReturn : public BindingIter
 
 {
   using SearchNodeId = std::pair<uint32_t, ObjectId>;
@@ -49,7 +48,7 @@ private:
   // Optimized structures
   std::vector<ObjectId> bfss_ordered;
   int current_bfs_chunk = 0;
-  int num_nodes_in_current_chunk = 0; 
+  int num_nodes_in_current_chunk = 0;
   int num_chunks = 0;
   uint64_t bit_mask_for_current_chunk;
   // -------------
@@ -66,8 +65,10 @@ private:
   // unordered_node_map<SearchNodeId, SearchState>
   // search_states[NUM_CONCURRENT_BFSS]; boost::unordered_node_map<SearchNodeId,
   // std::array<SearchState, NUM_CONCURRENT_BFS>> seen_optimized;
-  boost::unordered_node_map<SearchNodeId, SearchState, searchnodeid_hash>
-      search_states[NUM_CONCURRENT_BFS];
+  // boost::unordered_node_map<SearchNodeId, SearchState, searchnodeid_hash>
+  //     search_states[NUM_CONCURRENT_BFS];
+  std::unique_ptr<SearchState> the_only_search_state;
+
   // boost::unordered_node_map<
   //     ObjectId,
   //     boost::unordered_node_map<SearchNodeId, SearchState,
@@ -95,19 +96,16 @@ private:
   // The index of the transition being currently explored
   uint_fast32_t current_transition;
 
-  std::queue<SearchState*> search_states_for_current_iteration;
+  std::queue<SearchState *> search_states_for_current_iteration;
 
-  typename std::conditional<
-      MULTIPLE_FINAL, boost::unordered_flat_set<uint64_t>,
-      DummySet>::type reached_final[NUM_CONCURRENT_BFS];
-  
-
+  typename std::conditional<MULTIPLE_FINAL, boost::unordered_flat_set<uint64_t>,
+                            DummySet>::type reached_final[NUM_CONCURRENT_BFS];
 
 public:
   // Statistics
   uint_fast32_t idx_searches = 0;
 
-  BFSMultipleStartsOptimized(VarId path_var, std::vector<Id> start_nodes,
+  BFSMultipleStartsOptimizedNoReturn(VarId path_var, std::vector<Id> start_nodes,
                              VarId end_nodes, RPQ_DFA automaton,
                              std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),
@@ -121,14 +119,13 @@ public:
   void _begin(Binding &parent_binding) override;
   void _reset() override;
   bool _next() override;
-  
+
   void set_new_bfs_chunk_and_reset();
-  void single_reset() ;
-  bool single_next() ;
+  void single_reset();
+  bool single_next();
   void prepare_structures_for_next_chunk_processing();
   // Expand neighbors from current state
-  const SearchState *
-  expand_neighbors(const SearchNodeId &current_state);
+  const SearchState *expand_neighbors(const SearchNodeId &current_state);
 
   void assign_nulls() override {
     parent_binding->add(end, ObjectId::get_null());
