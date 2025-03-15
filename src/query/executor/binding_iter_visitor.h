@@ -108,6 +108,7 @@ namespace Paths {
         template <bool> class BFSEnum;
         template <bool> class BFSMultipleStarts;
         template <bool> class BFSMultipleStartsOptimized;
+        template <bool> class BFSMultipleStartsOptimizedNoReturn;
         template <bool> class BFSMultipleStartsNaive;
         template <bool> class BFSMultipleStartsNaiveParallel;
         class DFSCheck;
@@ -222,6 +223,8 @@ public:
     virtual void visit(Paths::Any::BFSMultipleStarts<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsOptimized<false>&)                = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsOptimized<true>&)                 = 0;
+    virtual void visit(Paths::Any::BFSMultipleStartsOptimizedNoReturn<false>&)                = 0;
+    virtual void visit(Paths::Any::BFSMultipleStartsOptimizedNoReturn<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<true>&)                 = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<false>&)                = 0;
     virtual void visit(Paths::Any::BFSMultipleStartsNaiveParallel<true>&)                 = 0;
