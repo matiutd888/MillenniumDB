@@ -1,6 +1,5 @@
 #pragma once
 
-#include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts_optimized_no_return_paths.h"
 #include <cstddef>
 
 

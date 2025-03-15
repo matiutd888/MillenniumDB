@@ -1,7 +1,6 @@
 #include "binding_iter_printer.h"
 
 #include "query/executor/binding_iter.h"
-#include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts_optimized_no_return_paths.h"
 #include "query/executor/binding_iters.h"
 #include "query/parser/op/op.h"
 #include "storage/index/tensor_store/lsh/binding_iters/forest_index_top_k.h"
