@@ -63,6 +63,7 @@
 #include "query/executor/binding_iter/paths/any_walks/bfs_check.h"
 #include "query/executor/binding_iter/paths/any_walks/bfs_enum.h"
 #include "query/executor/binding_iter/paths/any_walks//bfs_multiple_starts.h"
+#include "query/executor/binding_iter/paths/any_walks//bfs_multiple_starts_optimized.h"
 #include "query/executor/binding_iter/paths/any_walks//bfs_multiple_starts_naive.h"
 #include "query/executor/binding_iter/paths/any_walks//bfs_multiple_starts_naive_parallel.h"
 #include "query/executor/binding_iter/paths/any_walks/dfs_check.h"
