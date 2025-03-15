@@ -79,5 +79,5 @@ for s in "${server_params[@]}"; do
 
 done
 
-python transform_experiment_results.py $execution_durations_file
-python transform_experiment_results.py $visited_nodes_file
+python3 transform_experiment_results.py $execution_durations_file
+python3 transform_experiment_results.py $visited_nodes_file

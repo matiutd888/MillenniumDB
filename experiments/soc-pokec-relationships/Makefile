@@ -28,7 +28,7 @@ pokec_with_starting_nodes: $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm
 $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm: $(DATA_DIR)/pokec_pathfinder.txt
 	mkdir -p $(BUILD_DIR)
 	cp $(DATA_DIR)/pokec_pathfinder.txt $(BUILD_DIR)/pokec_pathfinder_tmp.txt
-	python $(SCRIPTS_DIR)/add_starting_nodes.py > $(DATA_DIR)/starting_nodes_pokec_pathfinder.txt
+	python3 $(SCRIPTS_DIR)/add_starting_nodes.py > $(DATA_DIR)/starting_nodes_pokec_pathfinder.txt
 	echo "" >> $(BUILD_DIR)/pokec_pathfinder_tmp.txt
 	cat $(DATA_DIR)/starting_nodes_pokec_pathfinder.txt >> $(BUILD_DIR)/pokec_pathfinder_tmp.txt
 	cp $(BUILD_DIR)/pokec_pathfinder_tmp.txt $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm
