@@ -13,7 +13,7 @@
 using namespace std;
 using namespace Paths::Any;
 
-void debug_print_bfs_id_bit_set(uint64_t bfs_id_bit_set) {
+static void debug_print_bfs_id_bit_set(uint64_t bfs_id_bit_set) {
   _debug_mati_simple() << std::bitset<64>(bfs_id_bit_set);
 }
 
