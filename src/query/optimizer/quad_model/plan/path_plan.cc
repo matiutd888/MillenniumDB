@@ -29,6 +29,7 @@
 #include "query/executor/binding_iter/paths/any_walks/bfs_enum.h"
 #include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts_naive_parallel.h"
 #include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts_optimized.h"
+#include "query/executor/binding_iter/paths/any_walks/bfs_multiple_starts_optimized_no_return_paths.h"
 #include "query/executor/binding_iter/paths/any_walks/dfs_check.h"
 #include "query/executor/binding_iter/paths/any_walks/dfs_enum.h"
 #include "query/executor/binding_iter/paths/experimental/all_shortest_walks_count/bfs_check.h"
@@ -85,7 +86,17 @@ std::unique_ptr<BindingIter> PathPlan::run_multiple_walks(std::unique_ptr<Paths:
             return make_unique<Paths::Any::BFSMultipleStartsOptimized<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
         }
 
-    } else {
+    } else if (ms_strategy == "optimized_no_return") {
+        if (automaton.total_final_states > 1)
+        {
+            return make_unique<Paths::Any::BFSMultipleStartsOptimizedNoReturn<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
+        }
+        else
+        {
+            return make_unique<Paths::Any::BFSMultipleStartsOptimizedNoReturn<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
+        }
+
+    }else {
         if (automaton.total_final_states > 1)
         {
             return make_unique<Paths::Any::BFSMultipleStarts<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
