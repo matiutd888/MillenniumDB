@@ -6,6 +6,10 @@ experiments/soc-pokec-relationships/prepare_data/raw_data
 experiments/soc-pokec-relationships/data
 experiments/soc-pokec-relationships/results
 
+experiments/ldbc/prepare_data/raw_data
+experiments/ldbc/data
+experiments/ldbc/results
+
 .vscode
 delete_vscode_server.sh
 .devcontainer
