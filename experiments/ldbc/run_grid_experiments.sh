@@ -36,11 +36,11 @@ db_name=$2
 no_limit_char="#"
 
 # Define parameters for both scripts
-server_params=(start0)
+server_params=(start0 start1 start2)
 declare -A query_params_dict
 query_params_dict["start0"]="#"
-query_params_dict["start1"]="1 2 3"
-query_params_dict["start2"]="1 2"
+query_params_dict["start1"]="#"
+query_params_dict["start2"]="#"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
@@ -71,7 +71,8 @@ for s in "${server_params[@]}"; do
     # Iterate over query parameters
     for q in ${query_params_dict[$s]}; do
         if [[ "$q" == "$no_limit_char" ]]; then
-            echo "Found match $q"
+            echo "Executing ./run_no_limit_query.sh;"
+            { time ./run_no_limit_query.sh; } >/dev/null 2>> "$results_dir/time_output.txt"
         else
             echo "Executing ./run_max_path_query.sh $q;"
             { time ./run_max_path_query.sh "$q"; } >/dev/null 2>> "$results_dir/time_output.txt"
