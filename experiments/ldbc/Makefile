@@ -5,7 +5,7 @@ DATA_DIR := $(abspath data)
 RAW_DATA_DIR := $(abspath prepare_data/raw_data)
 MILLENIUMDB_BUILD_DIR := $(abspath ../../build/standard)
 
-.PHONY: check_raw_files make_database_file_without_starting_nodes clean
+.PHONY: check_raw_files database_file_without_starting_nodes database_file_with_starting_nodes ldbc_db clean
 
 $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv:
 	@set -x; tmpdir=$$(mktemp -d) && \
@@ -31,36 +31,26 @@ $(DATA_DIR)/ldbc_$(SF).txt: check_raw_files
 	python3 $(SCRIPTS_DIR)/convert_csv_to_txt.py $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv >$(DATA_DIR)/ldbc_$(SF).txt
 	echo "Database file created at $(DATA_DIR)/ldbc_$(SF).txt"
 
-make_database_file_without_starting_nodes: $(DATA_DIR)/ldbc_$(SF).txt
-
-# $(DATA_DIR)/ldbc_$(SF)_with_starting_nodes.qm: make_database_file_without_starting_nodes
+database_file_without_starting_nodes: $(DATA_DIR)/ldbc_$(SF).txt
 
 
-# $(DATA_DIR)/pokec_pathfinder.txt: check_raw_files 
-# 	mkdir -p $(DATA_DIR)
-# 	mkdir -p $(BUILD_DIR)
-# 	cp $(SCRIPTS_DIR)/process_pokec.py $(SCRIPTS_DIR)/pokec_to_pathfinder.py $(BUILD_DIR)/
-# 	cd $(BUILD_DIR) && python3 process_pokec.py $(RAW_DATA_DIR)/soc-pokec-relationships.txt
-# 	cd $(BUILD_DIR) && python3 pokec_to_pathfinder.py pokec_edges.csv Knows
-# 	cp $(BUILD_DIR)/pokec_pathfinder.txt $(DATA_DIR)/
-# 	@echo "Database file created at $(DATA_DIR)/pokec_pathfinder.txt"
-# 
-# pokec_with_starting_nodes: $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm 
-# 
-# $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm: $(DATA_DIR)/pokec_pathfinder.txt
-# 	mkdir -p $(BUILD_DIR)
-# 	cp $(DATA_DIR)/pokec_pathfinder.txt $(BUILD_DIR)/pokec_pathfinder_tmp.txt
-# 	python3 $(SCRIPTS_DIR)/add_starting_nodes.py > $(DATA_DIR)/starting_nodes_pokec_pathfinder.txt
-# 	echo "" >> $(BUILD_DIR)/pokec_pathfinder_tmp.txt
-# 	cat $(DATA_DIR)/starting_nodes_pokec_pathfinder.txt >> $(BUILD_DIR)/pokec_pathfinder_tmp.txt
-# 	cp $(BUILD_DIR)/pokec_pathfinder_tmp.txt $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm
-# 	@echo "Created file $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm sucessfully"
-# 
-# pokec_db: $(DATA_DIR)/databases/pokec_db 
-# 
-# $(DATA_DIR)/databases/pokec_db: $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm 
-# 	mkdir -p $(DATA_DIR)/databases
-# 	$(MILLENIUMDB_BUILD_DIR)/bin/mdb-import $(DATA_DIR)/pokec_pathfinder_with_starting_nodes.qm  $(DATA_DIR)/databases/pokec_db
+$(DATA_DIR)/ldbc_$(SF)_with_starting_nodes.qm: database_file_without_starting_nodes
+	mkdir -p $(BUILD_DIR)
+	cp $(DATA_DIR)/ldbc_$(SF).txt $(BUILD_DIR)/ldbc_$(SF)_tmp.txt
+	python3 $(SCRIPTS_DIR)/add_starting_nodes.py --file_with_graph $(BUILD_DIR)/ldbc_$(SF)_tmp.txt >$(DATA_DIR)/starting_nodes_ldbc_$(SF).txt
+	echo "" >> $(BUILD_DIR)/ldbc_$(SF)_tmp.txt
+	cat $(DATA_DIR)/starting_nodes_ldbc_$(SF).txt >> $(BUILD_DIR)/ldbc_$(SF)_tmp.txt
+	cp $(BUILD_DIR)/ldbc_$(SF)_tmp.txt $(DATA_DIR)/ldbc_$(SF)_with_starting_nodes.qm
+	@echo "Created file $(DATA_DIR)/ldbc_$(SF)_with_starting_nodes.qm sucessfully"
+
+database_file_with_starting_nodes: $(DATA_DIR)/ldbc_$(SF)_with_starting_nodes.qm
+	
+	
+$(DATA_DIR)/databases/ldbc_$(SF)_db: database_file_with_starting_nodes 
+	mkdir -p $(DATA_DIR)/databases
+	$(MILLENIUMDB_BUILD_DIR)/bin/mdb-import $(DATA_DIR)/ldbc_$(SF)_with_starting_nodes.qm  $(DATA_DIR)/databases/ldbc_$(SF)_db
+
+ldbc_db: $(DATA_DIR)/databases/ldbc_$(SF)_db
 
 clean:
 	@echo "Cleaning up build directory..."
