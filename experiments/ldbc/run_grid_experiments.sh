@@ -26,32 +26,34 @@ stop_mdb_server() {
 
 # Check if script parameter is provided
 if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <MS_STRATEGY> <DB_NAME>"
+    echo "Usage: $0 <MS_STRATEGY> <sf>"
     exit 1
 fi
 
 ms_strategy=$1
-db_name=$2
+sf=$2
 
 no_limit_char="#"
 
 # Define parameters for both scripts
-server_params=(start0 start1 start2)
+server_params=(start0 start1 start2 start3 start4)
 declare -A query_params_dict
 query_params_dict["start0"]="#"
 query_params_dict["start1"]="#"
 query_params_dict["start2"]="#"
+query_params_dict["start3"]="#"
+query_params_dict["start4"]="#"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
-results_dir="results/experiment-$ms_strategy-$timestamp"
+results_dir="results/experiment-$sf-$ms_strategy-$timestamp"
 mkdir -p "$results_dir"
 
 echo "Saving to $results_dir"
 
 # Output files
-execution_durations_file="$results_dir/$ms_strategy-execution-durations.csv"
-visited_nodes_file="$results_dir/$ms_strategy-visited-nodes-counter.csv"
+execution_durations_file="$results_dir/$sf-$ms_strategy-execution-durations.csv"
+visited_nodes_file="$results_dir/$sf-$ms_strategy-visited-nodes-counter.csv"
 # query_times_file="$results_dir/$ms_strategy-query-times.csv"
 
 # Clear previous results
@@ -65,7 +67,7 @@ for s in "${server_params[@]}"; do
     stop_server_script
 
     sleep 1
-    ./run_server.sh "$ms_strategy" "$s" data/databases/$db_name > "$log_file" 2>&1 &
+    ./run_server.sh "$ms_strategy" "$s" data/databases/ldbc_${sf}_db > "$log_file" 2>&1 &
     sleep 1
 
     # Iterate over query parameters

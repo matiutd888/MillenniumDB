@@ -7,6 +7,8 @@ MILLENIUMDB_BUILD_DIR := $(abspath ../../build/standard)
 
 .PHONY: check_raw_files database_file_without_starting_nodes database_file_with_starting_nodes ldbc_db clean
 
+all: ldbc_db
+
 $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv:
 	@set -x; tmpdir=$$(mktemp -d) && \
 	echo "Temporary directory: $$tmpdir" && \

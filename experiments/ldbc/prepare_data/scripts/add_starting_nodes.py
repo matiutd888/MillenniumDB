@@ -1,9 +1,7 @@
 # 1. Sample starting nodes
 # 2. Add them to create new pathfinder file (just pokec_pathfinder.txt content + the declaration of start nodes)
-
+import sys
 import argparse
-import random
-
 import random
 
 random.seed(42)  # Replace 42 with any fixed number
@@ -63,13 +61,14 @@ def extract_nodes_from_file(file_path):
 
 def main():
     parser = argparse.ArgumentParser(description='Number of starting nodes to test')
-    parser.add_argument('starting_nodes_counts', nargs='*', type=int, default=[10, 100, 1000],
+    parser.add_argument('starting_nodes_counts', nargs='*', type=int, default=[10, 100, 200, 500, 1000],
                         help='List of starting nodes counts to sample in each category (default: [10, 100, 200, 500, 1000])')
     parser.add_argument('--file_with_graph', type=str,
                         help="Path to file with graph structure")
     args = parser.parse_args()
 
     all_nodes_list = extract_nodes_from_file(args.file_with_graph)
+    print("Number of all nodes:", len(all_nodes_list), file=sys.stderr)
     generate_random_starting_nodes_labels(all_nodes_list, args.starting_nodes_counts, lambda x: list(map(lambda item: print(item), x)))
 
 if __name__ == "__main__":
