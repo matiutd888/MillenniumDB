@@ -1,0 +1,35 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1009k    0 1009k  100    71  21.9M   1581 --:--:-- --:--:-- --:--:-- 22.4M
+
+real	0m0,059s
+user	0m0,012s
+sys	0m0,011s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 11.2M    0 11.2M  100    71  55.0M    347 --:--:-- --:--:-- --:--:-- 54.7M100 12.0M    0 12.0M  100    71  55.3M    325 --:--:-- --:--:-- --:--:-- 55.1M
+
+real	0m0,232s
+user	0m0,031s
+sys	0m0,057s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 5881k    0 5881k  100    71  44.1M    546 --:--:-- --:--:-- --:--:-- 44.1M100 24.3M    0 24.3M  100    71  53.9M    157 --:--:-- --:--:-- --:--:-- 53.8M
+
+real	0m0,464s
+user	0m0,047s
+sys	0m0,115s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 2519k    0 2519k  100    71  40.7M   1176 --:--:-- --:--:-- --:--:-- 40.3M100 57.6M    0 57.6M  100    71  54.3M     66  0:00:01  0:00:01 --:--:-- 54.3M100 62.6M    0 62.6M  100    71  54.8M     62  0:00:01  0:00:01 --:--:-- 54.8M
+
+real	0m1,152s
+user	0m0,157s
+sys	0m0,244s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 50.6M    0 50.6M  100    71  51.3M     72 --:--:-- --:--:-- --:--:-- 51.2M100  107M    0  107M  100    71  54.0M     35  0:00:02  0:00:01  0:00:01 54.0M100  127M    0  127M  100    71  54.9M     30  0:00:02  0:00:02 --:--:-- 54.9M
+
+real	0m2,332s
+user	0m0,337s
+sys	0m0,445s

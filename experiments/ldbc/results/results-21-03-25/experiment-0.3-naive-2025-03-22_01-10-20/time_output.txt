@@ -1,0 +1,35 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 1009k    0 1009k  100    71  17.1M   1234 --:--:-- --:--:-- --:--:-- 17.3M
+
+real	0m0,071s
+user	0m0,008s
+sys	0m0,018s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 12.0M    0 12.0M  100    71  50.8M    298 --:--:-- --:--:-- --:--:-- 51.0M
+
+real	0m0,252s
+user	0m0,057s
+sys	0m0,038s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 24.3M    0 24.3M  100    71  55.3M    161 --:--:-- --:--:-- --:--:-- 55.4M
+
+real	0m0,457s
+user	0m0,071s
+sys	0m0,095s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 33.4M    0 33.4M  100    71  51.4M    109 --:--:-- --:--:-- --:--:-- 51.4M100 62.6M    0 62.6M  100    71  54.4M     61  0:00:01  0:00:01 --:--:-- 54.5M
+
+real	0m1,167s
+user	0m0,163s
+sys	0m0,249s
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 25.4M    0 25.4M  100    71  48.0M    133 --:--:-- --:--:-- --:--:-- 47.9M100 81.6M    0 81.6M  100    71  53.3M     46  0:00:01  0:00:01 --:--:-- 53.3M100  127M    0  127M  100    71  55.0M     30  0:00:02  0:00:02 --:--:-- 55.0M
+
+real	0m2,327s
+user	0m0,321s
+sys	0m0,473s
