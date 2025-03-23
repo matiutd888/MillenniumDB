@@ -21,8 +21,8 @@ $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv:
 	source venv/bin/activate && \
 	tools/run.py -- --scale-factor $(SF) --output-dir $$tmpdir && \
 	mkdir -p $(RAW_DATA_DIR)/sf-$(SF)/ && \
-	cp $$(find $$tmpdir/graphs/csv/raw/composite-merged-fk/dynamic/Person_knows_Person/ -type f -name "*.csv") $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv
-#	rm -rf $$tmpdir
+    find $$tmpdir/graphs/csv/raw/composite-merged-fk/dynamic/Person_knows_Person/ -type f -name "*.csv" -print0 |  xargs -0 awk 'FNR==1 && NR!=1 {next} {print}' > $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv
+	rm -rf $$tmpdir
 
 check_raw_files: $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv
 	@echo "File exists, proceeding..."
