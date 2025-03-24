@@ -37,6 +37,7 @@ no_limit_char="#"
 
 # Define parameters for both scripts
 server_params=(start0 start1 start2 start3 start4)
+# server_params=(start0)
 declare -A query_params_dict
 query_params_dict["start0"]="#"
 query_params_dict["start1"]="#"

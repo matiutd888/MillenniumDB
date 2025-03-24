@@ -76,7 +76,7 @@ void BFSMultipleStartsOptimizedNoReturn<
     //     start_object_id,
     //                                 nullptr, true,
     //                                 ObjectId::get_null())}};
-    bfss_that_reached_given_node[start_node_id] = 1 << bfs_index;
+    bfss_that_reached_given_node[start_node_id] = uint64_t(1) << bfs_index;
     first_visit_q.push(std::make_pair(start_node_id, bfs_index));
   }
   iter = make_unique<NullIndexIterator>();
@@ -285,23 +285,24 @@ BFSMultipleStartsOptimizedNoReturn<MULTIPLE_FINAL>::expand_neighbors(
           _debug_mati() << "new state is final state " << std::endl;
           int count = __builtin_popcount(difference);
           for (int i = 0; i < count; i++) {
-        // TODO Here should be REACHED FINAL logic
-        //     if (MULTIPLE_FINAL) {
-        //       if (reached_final[bfs_index].find(new_node_id.second.id) ==
-        //           reached_final[bfs_index].end()) {
-        //         reached_final[bfs_index].insert(new_node_id.second.id);
-        //         search_states_for_current_iteration.push(
-        //             &insertion_result.first->second);
-        //       } else {
-        //         _debug_mati() << "For bfs_index " << bfs_index
-        //                       << "the final state " << new_node_id.second.id
-        //                       << " was already reached!" << std::endl;
-        //       }
-        //     } else {
-        //       search_states_for_current_iteration.push(
-        //           &insertion_result.first->second);
-        //     }
-            
+            // TODO Here should be REACHED FINAL logic
+            //     if (MULTIPLE_FINAL) {
+            //       if (reached_final[bfs_index].find(new_node_id.second.id) ==
+            //           reached_final[bfs_index].end()) {
+            //         reached_final[bfs_index].insert(new_node_id.second.id);
+            //         search_states_for_current_iteration.push(
+            //             &insertion_result.first->second);
+            //       } else {
+            //         _debug_mati() << "For bfs_index " << bfs_index
+            //                       << "the final state " <<
+            //                       new_node_id.second.id
+            //                       << " was already reached!" << std::endl;
+            //       }
+            //     } else {
+            //       search_states_for_current_iteration.push(
+            //           &insertion_result.first->second);
+            //     }
+
             search_states_for_current_iteration.push(
                 the_only_search_state.get());
           }

@@ -10,7 +10,7 @@ MILLENIUMDB_BUILD_DIR := $(abspath ../../build/standard)
 all: ldbc_db
 
 $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv:
-	@set -x; tmpdir=$$(mktemp -d) && \
+	@set -x; tmpdir=$$(mktemp -d /tmp/milleniumdbmatiXXXXXX) && \
 	echo "Temporary directory: $$tmpdir" && \
 	cd ~/ldbc_snb_datagen_spark && \
 	PLATFORM_VERSION=$$(sbt -batch -error 'print platformVersion') && export PLATFORM_VERSION && \
@@ -19,7 +19,7 @@ $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv:
 	echo "LDBC JAR: $$LDBC_SNB_DATAGEN_JAR" && \
 	test -f venv/bin/activate || { echo "venv not found!"; exit 1; } && \
 	source venv/bin/activate && \
-	tools/run.py --parallelism 4 --memory 6G -- --scale-factor $(SF) --output-dir $$tmpdir && \
+	tools/run.py --parallelism 6 --memory 8G -- --scale-factor $(SF) --output-dir $$tmpdir && \
 	mkdir -p $(RAW_DATA_DIR)/sf-$(SF)/ && \
     find $$tmpdir/graphs/csv/raw/composite-merged-fk/dynamic/Person_knows_Person/ -type f -name "*.csv" -print0 |  xargs -0 awk 'FNR==1 && NR!=1 {next} {print}' > $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv
 	rm -rf $$tmpdir

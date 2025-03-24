@@ -4,9 +4,8 @@ import sys
 import argparse
 import random
 
-random.seed(42)  # Replace 42 with any fixed number
-
 def sample_numbers(all_numbers, k):
+    random.seed(42)  # Replace 42 with any fixed number
     return random.sample(all_numbers, k)
 
 # awk -F'P|->| ' '{for(i=1;i<=NF;i++) if($i ~ /^[0-9]+$/ && $i > max) max=$i} END{print max}' $FILE
