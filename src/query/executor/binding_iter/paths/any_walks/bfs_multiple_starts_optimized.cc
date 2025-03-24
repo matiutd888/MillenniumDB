@@ -69,7 +69,7 @@ void BFSMultipleStartsOptimized<
     search_states[bfs_index] = {
         {start_node_id, SearchState(automaton.start_state, start_object_id,
                                     nullptr, true, ObjectId::get_null())}};
-    bfss_that_reached_given_node[start_node_id] = 1 << bfs_index;
+    bfss_that_reached_given_node[start_node_id] = uint64_t(1) << bfs_index;
     first_visit_q.push(std::make_pair(start_node_id, bfs_index));
   }
   iter = make_unique<NullIndexIterator>();
@@ -251,6 +251,10 @@ const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
                     << new_node_id.second << std::endl;
       auto bfses_that_reached_the_new_state =
           bfss_that_reached_given_node[new_node_id];
+
+      _debug_mati() << "bfses_that_reached_the_new_state ";
+      debug_print_bfs_id_bit_set(bfses_that_reached_the_new_state);
+      _debug_mati_simple() << std::endl;
 
       // _debug_mati() << "bfses_that_reached_the_new_state: ";
       // debug_print_container(bfses_that_reached_the_new_state);

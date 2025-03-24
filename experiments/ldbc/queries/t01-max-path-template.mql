@@ -1,0 +1,3 @@
+// Starting node is overwritten
+MATCH (P1)=[?p :Knows{1, MAX_PATH}]=>(?x)
+RETURN *
