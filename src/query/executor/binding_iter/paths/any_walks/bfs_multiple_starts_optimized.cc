@@ -69,6 +69,10 @@ void BFSMultipleStartsOptimized<
     search_states[bfs_index] = {
         {start_node_id, SearchState(automaton.start_state, start_object_id,
                                     nullptr, true, ObjectId::get_null())}};
+    &search_states[bfs_index].find(start_node_id)->second;
+    single_search_state = 
+    &search_states[bfs_index].find(start_node_id)->second;
+;
     bfss_that_reached_given_node[start_node_id] = uint64_t(1) << bfs_index;
     first_visit_q.push(std::make_pair(start_node_id, bfs_index));
   }
@@ -158,7 +162,6 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_next() {
         auto pointer_to_reached_state = &search_states[first_visit_q_top.second]
                                              .find(curr_first_node)
                                              ->second;
-        single_search_state = pointer_to_reached_state;
         auto path_id =
             path_manager.set_path(pointer_to_reached_state, path_var);
         parent_binding->add(path_var, path_id);
