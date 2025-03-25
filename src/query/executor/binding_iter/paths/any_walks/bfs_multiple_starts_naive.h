@@ -34,6 +34,8 @@ private:
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
   Counter visited_nodes_counter;  
+  
+  SearchState const *the_only_search_state;
 
   std::queue<ObjectId> start_nodes_q;
   ObjectId current_start_node;
