@@ -290,10 +290,9 @@ const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
                         << std::endl;
           int bfs_index = __builtin_ctzll(bitmask_it);
           _debug_mati() << "bfs_index: " << bfs_index << std::endl;
-          assert(search_states[bfs_index].find(current_state_id) !=
-                 search_states[bfs_index].end());
-          auto previous =
-              &(search_states[bfs_index].find(current_state_id)->second);
+          auto it = search_states[bfs_index].find(current_state_id);
+          assert(it != search_states[bfs_index].end());
+          auto previous = &(it->second);
           SearchState s(new_node_id.first, new_node_id.second, previous,
                         transition.inverse, transition.type_id);
           auto insertion_result =
