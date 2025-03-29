@@ -47,6 +47,7 @@ private:
   Binding *parent_binding;
 
   // Optimized structures
+  SearchState *single_search_state;
   std::vector<ObjectId> bfss_ordered;
   int current_bfs_chunk = 0;
   int num_nodes_in_current_chunk = 0; 

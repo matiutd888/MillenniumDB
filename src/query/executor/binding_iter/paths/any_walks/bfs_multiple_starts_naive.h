@@ -34,6 +34,8 @@ private:
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
   Counter visited_nodes_counter;  
+  
+  const SearchState *the_only_search_state;
 
   std::queue<ObjectId> start_nodes_q;
   ObjectId current_start_node;
@@ -67,7 +69,7 @@ public:
                          RPQ_DFA automaton,
                          std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end),
-        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter") {}
+        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter"), the_only_search_state(nullptr) {}
 
   void accept_visitor(BindingIterVisitor &visitor) override;
   void _begin(Binding &parent_binding) override;

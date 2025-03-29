@@ -69,6 +69,10 @@ void BFSMultipleStartsOptimized<
     search_states[bfs_index] = {
         {start_node_id, SearchState(automaton.start_state, start_object_id,
                                     nullptr, true, ObjectId::get_null())}};
+    &search_states[bfs_index].find(start_node_id)->second;
+    single_search_state = 
+    &search_states[bfs_index].find(start_node_id)->second;
+;
     bfss_that_reached_given_node[start_node_id] = uint64_t(1) << bfs_index;
     first_visit_q.push(std::make_pair(start_node_id, bfs_index));
   }
@@ -173,10 +177,13 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_next() {
     while (visit_q.size() > 0) {
       auto current_node_id = visit_q.front();
       auto reached_final_state = expand_neighbors(current_node_id);
+
       // Enumerate reached solutions
       if (reached_final_state != nullptr) {
         _debug_mati() << "Reached final state for bfs id "
                       << *reached_final_state << std::endl;
+        // HERE IS THE LOGIC THAT OVERRIDES RETURNED PATH
+        reached_final_state = single_search_state;
         auto path_id = path_manager.set_path(reached_final_state, path_var);
         parent_binding->add(path_var, path_id);
         parent_binding->add(end, reached_final_state->node_id);

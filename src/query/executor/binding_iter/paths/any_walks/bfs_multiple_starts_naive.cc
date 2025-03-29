@@ -73,7 +73,8 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_next() {
         reached_final.insert(current_state->node_id.id);
       }
       auto path_id = path_manager.set_path(
-          visited.insert(reached_state).first.operator->(), path_var);
+          visited.insert(reached_state).first.operator->()
+, path_var);
       parent_binding->add(path_var, path_id);
       parent_binding->add(end, current_state->node_id);
       return true;
@@ -86,6 +87,11 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_next() {
 
     // Enumerate reached solutions
     if (reached_final_state != nullptr) {
+      if (the_only_search_state == nullptr) {
+        the_only_search_state = reached_final_state;
+      }
+      // HERE IS THE LOGIC THAT OVERRIDES RETURNED PATH
+      reached_final_state = the_only_search_state;
       auto path_id = path_manager.set_path(reached_final_state, path_var);
       parent_binding->add(path_var, path_id);
       parent_binding->add(end, reached_final_state->node_id);
@@ -108,6 +114,7 @@ void BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_reset() {
     reached_final.clear();
   }
   first_next = true;
+  the_only_search_state = nullptr;
 
   auto state_inserted =
       visited.emplace(automaton.start_state, current_start_node, nullptr, true,
@@ -118,7 +125,7 @@ void BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_reset() {
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsNaive<MULTIPLE_FINAL>::_reset() {
-  visited_nodes_counter.reset(); 
+  visited_nodes_counter.reset();
   for (auto node : start_nodes) {
     ObjectId start_object_id =
         node.is_var() ? (*parent_binding)[node.get_var()] : node.get_OID();
