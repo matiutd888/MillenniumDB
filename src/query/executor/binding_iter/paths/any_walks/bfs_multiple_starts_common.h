@@ -29,7 +29,7 @@ inline std::string get_starting_label_str() {
 
 class Counter {
 private:
-    int count;
+    unsigned long long int count;
     std::string name;
 
 public:
