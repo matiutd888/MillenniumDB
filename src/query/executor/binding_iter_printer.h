@@ -119,6 +119,8 @@ public:
     virtual void visit(Paths::Any::BFSMultipleStarts<true>&)           override;
     virtual void visit(Paths::Any::BFSMultipleStartsOptimized<false>&)          override;
     virtual void visit(Paths::Any::BFSMultipleStartsOptimized<true>&)           override;
+    virtual void visit(Paths::Any::BFSMultipleStartsOptimizedBitset<false>&)          override;
+    virtual void visit(Paths::Any::BFSMultipleStartsOptimizedBitset<true>&)           override;
     virtual void visit(Paths::Any::BFSMultipleStartsOptimizedNoReturn<false>&)          override;
     virtual void visit(Paths::Any::BFSMultipleStartsOptimizedNoReturn<true>&)           override;
     virtual void visit(Paths::Any::BFSMultipleStartsNaive<false>&)          override;

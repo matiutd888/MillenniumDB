@@ -23,11 +23,11 @@ namespace Paths {
 namespace Any {
 
 /*
-BFSMultipleStartsOptimized returns a single path to all
+BFSMultipleStartsOptimizedBitset returns a single path to all
 reachable nodes from a starting node, using BFS.
 */
 template <bool MULTIPLE_FINAL>
-class BFSMultipleStartsOptimized : public BindingIter
+class BFSMultipleStartsOptimizedBitset : public BindingIter
 
 {
   using SearchNodeId = std::pair<uint32_t, ObjectId>;
@@ -108,7 +108,7 @@ public:
   // Statistics
   uint_fast32_t idx_searches = 0;
 
-  BFSMultipleStartsOptimized(VarId path_var, std::vector<Id> start_nodes,
+  BFSMultipleStartsOptimizedBitset(VarId path_var, std::vector<Id> start_nodes,
                              VarId end_nodes, RPQ_DFA automaton,
                              std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),

@@ -1076,6 +1076,20 @@ void BindingIterPrinter::visit(Paths::Any::BFSMultipleStarts<true>& binding_iter
     os << ")\n";
 }
 
+void BindingIterPrinter::visit(Paths::Any::BFSMultipleStartsOptimizedBitset<false>& binding_iter) {
+    std::stringstream ss;
+    ss << "idx_searches: " << binding_iter.idx_searches;
+    auto helper = BindingIterPrinterHelper("Paths::Any::BFSMultipleStartsOptimizedBitset<false>", *this, binding_iter, ss.str());
+    os << ")\n";
+}
+
+void BindingIterPrinter::visit(Paths::Any::BFSMultipleStartsOptimizedBitset<true>& binding_iter) {
+    std::stringstream ss;
+    ss << "idx_searches: " << binding_iter.idx_searches;
+    auto helper = BindingIterPrinterHelper("Paths::Any::BFSMultipleStartsOptimizedBitset<true>", *this, binding_iter, ss.str());
+    os << ")\n";
+}
+
 void BindingIterPrinter::visit(Paths::Any::BFSMultipleStartsOptimized<false>& binding_iter) {
     std::stringstream ss;
     ss << "idx_searches: " << binding_iter.idx_searches;

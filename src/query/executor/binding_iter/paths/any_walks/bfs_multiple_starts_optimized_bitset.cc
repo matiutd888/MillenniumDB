@@ -1,4 +1,4 @@
-#include "bfs_multiple_starts_optimized.h"
+#include "bfs_multiple_starts_optimized_bitset.h"
 #include "graph_models/quad_model/quad_model.h"
 #include "graph_models/quad_model/quad_object_id.h"
 #include "system/path_manager.h"
@@ -13,7 +13,7 @@ using namespace std;
 using namespace Paths::Any;
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(
+void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_begin(
     Binding &_parent_binding) {
   parent_binding = &_parent_binding;
   // first_next = true;
@@ -49,7 +49,7 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_begin(
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<
+void BFSMultipleStartsOptimizedBitset<
     MULTIPLE_FINAL>::prepare_structures_for_next_chunk_processing() {
   for (int bfs_index = 0; bfs_index < num_nodes_in_current_chunk; bfs_index++) {
     ObjectId start_object_id =
@@ -75,7 +75,7 @@ void BFSMultipleStartsOptimized<
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
+void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
   _debug_mati() << "setting new bfs chunk: current_bfs_chunk "
                 << current_bfs_chunk << std::endl;
   assert(current_bfs_chunk < num_chunks);
@@ -97,7 +97,7 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_reset() {
+void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::single_reset() {
   for (int i = 0; i < NUM_CONCURRENT_BFS; i++) {
     search_states[i].clear();
   }
@@ -118,14 +118,14 @@ void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_reset() {
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_reset() {
+void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_reset() {
   // Empty open and visited
   visited_nodes_counter.reset();
   current_bfs_chunk = 0;
   set_new_bfs_chunk_and_reset();
 }
 template <bool MULTIPLE_FINAL>
-bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
+bool BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_next() {
   if (single_next()) {
     return true;
   }
@@ -140,7 +140,7 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::_next() {
   }
 }
 template <bool MULTIPLE_FINAL>
-bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_next() {
+bool BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::single_next() {
   // Check if first state is final
   while (!first_visit_q.empty()) {
     auto first_visit_q_top = first_visit_q.front();
@@ -201,7 +201,7 @@ bool BFSMultipleStartsOptimized<MULTIPLE_FINAL>::single_next() {
 }
 
 template <bool MULTIPLE_FINAL>
-const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
+const SearchState *BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::expand_neighbors(
     const SearchNodeId &current_state_id) {
   // Check if this is the first time that current_state is explored
   if (iter->at_end()) {
@@ -340,10 +340,10 @@ const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimized<MULTIPLE_FINAL>::accept_visitor(
+void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::accept_visitor(
     BindingIterVisitor &visitor) {
   visitor.visit(*this);
 }
 
-template class Paths::Any::BFSMultipleStartsOptimized<true>;
-template class Paths::Any::BFSMultipleStartsOptimized<false>;
+template class Paths::Any::BFSMultipleStartsOptimizedBitset<true>;
+template class Paths::Any::BFSMultipleStartsOptimizedBitset<false>;
