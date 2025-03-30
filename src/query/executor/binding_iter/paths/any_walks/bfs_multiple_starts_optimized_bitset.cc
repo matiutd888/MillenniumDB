@@ -75,7 +75,8 @@ void BFSMultipleStartsOptimizedBitset<
 }
 
 template <bool MULTIPLE_FINAL>
-void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
+void BFSMultipleStartsOptimizedBitset<
+    MULTIPLE_FINAL>::set_new_bfs_chunk_and_reset() {
   _debug_mati() << "setting new bfs chunk: current_bfs_chunk "
                 << current_bfs_chunk << std::endl;
   assert(current_bfs_chunk < num_chunks);
@@ -85,10 +86,11 @@ void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::set_new_bfs_chunk_and_res
   _debug_mati() << "num_nodes_in_current_chunk: " << num_nodes_in_current_chunk
                 << std::endl;
   if (num_nodes_in_current_chunk == NUM_CONCURRENT_BFS) {
-    bit_mask_for_current_chunk = ~0ULL;
+    bit_mask_for_current_chunk.set();
   } else {
-    bit_mask_for_current_chunk =
-        bfs_id_bit_set((uint64_t(1) << num_nodes_in_current_chunk) - 1);
+    bit_mask_for_current_chunk.set();
+    bit_mask_for_current_chunk >>=
+        (NUM_CONCURRENT_BFS - num_nodes_in_current_chunk);
   }
   _debug_mati() << "bit_mask_for_current_chunk: " << bit_mask_for_current_chunk
                 << std::endl;
@@ -201,7 +203,8 @@ bool BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::single_next() {
 }
 
 template <bool MULTIPLE_FINAL>
-const SearchState *BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::expand_neighbors(
+const SearchState *
+BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::expand_neighbors(
     const SearchNodeId &current_state_id) {
   // Check if this is the first time that current_state is explored
   if (iter->at_end()) {

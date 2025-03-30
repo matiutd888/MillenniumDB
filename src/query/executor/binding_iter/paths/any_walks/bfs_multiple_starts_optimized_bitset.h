@@ -33,7 +33,7 @@ class BFSMultipleStartsOptimizedBitset : public BindingIter
   using SearchNodeId = std::pair<uint32_t, ObjectId>;
 
 private:
-  static constexpr int NUM_CONCURRENT_BFS = 64;
+  static constexpr int NUM_CONCURRENT_BFS = 256;
   using bfs_id_bit_set = std::bitset<NUM_CONCURRENT_BFS>;
   // Attributes determined in the constructor
   VarId path_var;
