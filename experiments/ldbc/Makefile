@@ -1,3 +1,4 @@
+SHELL := /bin/zsh
 SF ?= 0.1
 SCRIPTS_DIR := $(abspath prepare_data/scripts)
 BUILD_DIR := $(abspath prepare_data/build)
@@ -15,7 +16,7 @@ $(RAW_DATA_DIR)/sf-$(SF)/Person_knows_Person.csv:
 	cd ~/ldbc_snb_datagen_spark && \
 	PLATFORM_VERSION=$$(sbt -batch -error 'print platformVersion') && export PLATFORM_VERSION && \
 	DATAGEN_VERSION=$$(sbt -batch -error 'print version') && export DATAGEN_VERSION && \
-	LDBC_SNB_DATAGEN_JAR=$$(sbt -batch -error 'print assembly / assemblyOutputPath') && export LDBC_SNB_DATAGEN_JAR && \
+	# LDBC_SNB_DATAGEN_JAR=$$(sbt -batch -error 'print assembly / assemblyOutputPath') && export LDBC_SNB_DATAGEN_JAR && \
 	echo "LDBC JAR: $$LDBC_SNB_DATAGEN_JAR" && \
 	test -f venv/bin/activate || { echo "venv not found!"; exit 1; } && \
 	source venv/bin/activate && \
