@@ -46,8 +46,8 @@ TOTAL_NODES_COUNT=1632803
 
 def main():
     parser = argparse.ArgumentParser(description='Number of starting nodes to test')
-    parser.add_argument('starting_nodes_counts', nargs='*', type=int, default=[10, 100, 1000, 200, 500],
-                        help='List of starting nodes counts to sample in each category (default: [10, 100, 1000, 200, 500])')
+    parser.add_argument('starting_nodes_counts', nargs='*', type=int, default=[10, 100, 1000, 200, 500, 1],
+                        help='List of starting nodes counts to sample in each category (default: [10, 100, 1000, 200, 500, 1])')
     parser.add_argument('--total_nodes_count', type=int, default=TOTAL_NODES_COUNT,
                         help="Number of nodes to choose from for starting nodes (default: 1632803)")
     args = parser.parse_args()

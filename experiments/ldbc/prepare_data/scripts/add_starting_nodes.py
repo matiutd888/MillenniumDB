@@ -60,8 +60,8 @@ def extract_nodes_from_file(file_path):
 
 def main():
     parser = argparse.ArgumentParser(description='Number of starting nodes to test')
-    parser.add_argument('starting_nodes_counts', nargs='*', type=int, default=[10, 100, 200, 500, 1000],
-                        help='List of starting nodes counts to sample in each category (default: [10, 100, 200, 500, 1000])')
+    parser.add_argument('starting_nodes_counts', nargs='*', type=int, default=[10, 100, 200, 500, 1000, 1],
+                        help='List of starting nodes counts to sample in each category (default: [1, 10, 100, 200, 500, 1000])')
     parser.add_argument('--file_with_graph', type=str,
                         help="Path to file with graph structure")
     args = parser.parse_args()
