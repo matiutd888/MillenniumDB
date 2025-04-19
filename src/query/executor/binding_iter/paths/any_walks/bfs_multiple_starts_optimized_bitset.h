@@ -42,7 +42,7 @@ private:
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
   Counter visited_nodes_counter;
-  
+  StructureMemoryLogger memory_size_logger;
   // where the results will be written, determined in begin()
   Binding *parent_binding;
 

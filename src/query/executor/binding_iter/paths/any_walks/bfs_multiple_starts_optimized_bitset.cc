@@ -111,7 +111,9 @@ void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_log_structures_sizes() {
         _log_mati() << "CALCULATE_MEMORY: structure " << i << " size: " << structure_size << std::endl;
         structures_sizes_sum += structure_size;
     }
+    memory_size_logger.log_size("search-states", structures_sizes_sum);
     _log_mati() << "CALCULATE_MEMORY: all structures " << structures_sizes_sum << std::endl;
+    _log_mati() << "CALCULATE_MEMORY: max size for search-states" << memory_size_logger.get_max_size("search-states").value_or(-1) << std::endl;
 }
 
 template <bool MULTIPLE_FINAL>
@@ -154,6 +156,7 @@ bool BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_next() {
     set_new_bfs_chunk_and_reset();
     return _next();
   } else {
+    _log_mati() << "CALCULATE_MEMORY: FINAL max size for search-states" << memory_size_logger.get_max_size("search-states").value_or(-1) << std::endl;
     std::cout << "Finished bfs with counter: " << visited_nodes_counter
               << std::endl;
     return false;
