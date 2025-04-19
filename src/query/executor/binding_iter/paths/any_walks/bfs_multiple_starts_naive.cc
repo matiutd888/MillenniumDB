@@ -160,7 +160,7 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::_next() {
     single_reset();
     return _next();
   } else {
-    _log_mati() << "CALCULATE_MEMORY: FINAL max size for visited"
+    _log_mati() << "CALCULATE_MEMORY: FINAL max size: "
                 << memory_size_logger.get_max_size("visited").value_or(-1)
                 << std::endl;
     std::cout << "Finished bfs with counter: " << visited_nodes_counter

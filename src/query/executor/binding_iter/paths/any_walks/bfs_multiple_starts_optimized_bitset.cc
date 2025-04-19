@@ -161,7 +161,7 @@ bool BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_next() {
     set_new_bfs_chunk_and_reset();
     return _next();
   } else {
-    _log_mati() << "CALCULATE_MEMORY: FINAL max size for search-states"
+    _log_mati() << "CALCULATE_MEMORY: FINAL max size: "
                 << memory_size_logger.get_max_size("search-states").value_or(-1)
                 << std::endl;
     std::cout << "Finished bfs with counter: " << visited_nodes_counter
