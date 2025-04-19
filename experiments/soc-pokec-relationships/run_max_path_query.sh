@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z "${!variable_name}" ]; then
+if [ -z "${MILLENIUM_DB_HOME_DIR}" ]; then
     MILLENIUM_DB_HOME_DIR="/home/mateusz/studia-current/mgr/MillenniumDB"
 fi
 

@@ -73,8 +73,7 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_next() {
         reached_final.insert(current_state->node_id.id);
       }
       auto path_id = path_manager.set_path(
-          visited.insert(reached_state).first.operator->()
-, path_var);
+          visited.insert(reached_state).first.operator->(), path_var);
       parent_binding->add(path_var, path_id);
       parent_binding->add(end, current_state->node_id);
       return true;
@@ -105,7 +104,24 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_next() {
 }
 
 template <bool MULTIPLE_FINAL>
+void BFSMultipleStartsNaive<MULTIPLE_FINAL>::_log_structures_sizes() {
+  if (!_should_log_memory) {
+    return;
+  }
+  size_t visited_size = estimate_unordered_node_set_memory(visited);
+  memory_size_logger.log_size("visited", visited_size);
+  _debug_mati() << "CALCULATE_MEMORY: current visited size " << visited_size
+              << std::endl;
+  _debug_mati() << "CALCULATE_MEMORY: max size for visited"
+              << StructureMemoryLogger::to_mb(
+                     memory_size_logger.get_max_size("visited").value_or(0))
+              << std::endl;
+}
+
+template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_reset() {
+  _log_structures_sizes();
+
   // Empty open and visited
   queue<const SearchState *> empty;
   open.swap(empty);
@@ -145,6 +161,11 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::_next() {
     single_reset();
     return _next();
   } else {
+    _log_structures_sizes();
+    _log_mati() << "CALCULATE_MEMORY: FINAL max size: "
+                << StructureMemoryLogger::to_mb(
+                       memory_size_logger.get_max_size("visited").value_or(0))
+                << std::endl;
     std::cout << "Finished bfs with counter: " << visited_nodes_counter
               << std::endl;
     return false;
