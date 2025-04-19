@@ -3,6 +3,7 @@
 #include "graph_models/object_id.h"
 #include "query/executor/binding_iter/paths/any_walks/search_state.h"
 #include <boost/unordered/unordered_node_map.hpp>
+#include <boost/unordered/unordered_node_set.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -140,5 +141,42 @@ size_t estimate_unordered_node_map_memory(
 
   // Total estimated memory
   return map_object_size + nodes_bytes + bucket_array_bytes;
+}
+
+
+template <typename T, typename Hash, typename Pred, typename Alloc>
+size_t estimate_unordered_node_set_memory(
+    const boost::unordered_node_set<T, Hash, Pred, Alloc> &set) {
+  // Base size of the set object itself (pointers, size, load factor, etc.)
+  size_t set_object_size = sizeof(set);
+
+  // Estimate size of the dynamically allocated nodes (one per element)
+  size_t nodes_bytes = 0;
+  if (set.size() > 0) {
+    // Estimate the size of each node. Nodes in linked lists typically
+    // contain the value (T) and at least a 'next' pointer. Maybe cached hash.
+    // This is a GUESS!
+    size_t node_overhead_guess =
+        sizeof(void *); // Minimal guess for 'next' pointer
+    // Could be higher, e.g., sizeof(void*) + sizeof(std::size_t) for cached
+    // hash
+
+    size_t estimated_node_size = sizeof(T) + node_overhead_guess;
+
+    nodes_bytes = set.size() * estimated_node_size;
+  }
+
+  // Estimate size of the bucket array
+  // The bucket array holds pointers (or indices/offsets) to the first node in
+  // each chain.
+  size_t bucket_array_bytes = 0;
+  if (set.bucket_count() > 0) {
+    // Estimate size of each entry in the bucket array. Usually a pointer.
+    size_t bucket_entry_size_guess = sizeof(void *);
+    bucket_array_bytes = set.bucket_count() * bucket_entry_size_guess;
+  }
+
+  // Total estimated memory
+  return set_object_size + nodes_bytes + bucket_array_bytes;
 }
 #endif

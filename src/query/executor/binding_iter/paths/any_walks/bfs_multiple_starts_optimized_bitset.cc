@@ -102,23 +102,28 @@ void BFSMultipleStartsOptimizedBitset<
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_log_structures_sizes() {
-    if (!_should_log_memory) {
-        return;
-    }
-    size_t structures_sizes_sum = 0;
-    for(int i = 0; i < NUM_CONCURRENT_BFS; i++) {
-        size_t structure_size = estimate_unordered_node_map_memory(search_states[i]);
-        _log_mati() << "CALCULATE_MEMORY: structure " << i << " size: " << structure_size << std::endl;
-        structures_sizes_sum += structure_size;
-    }
-    memory_size_logger.log_size("search-states", structures_sizes_sum);
-    _log_mati() << "CALCULATE_MEMORY: all structures " << structures_sizes_sum << std::endl;
-    _log_mati() << "CALCULATE_MEMORY: max size for search-states" << memory_size_logger.get_max_size("search-states").value_or(-1) << std::endl;
+  if (!_should_log_memory) {
+    return;
+  }
+  size_t structures_sizes_sum = 0;
+  for (int i = 0; i < NUM_CONCURRENT_BFS; i++) {
+    size_t structure_size =
+        estimate_unordered_node_map_memory(search_states[i]);
+    _log_mati() << "CALCULATE_MEMORY: structure " << i
+                << " size: " << structure_size << std::endl;
+    structures_sizes_sum += structure_size;
+  }
+  memory_size_logger.log_size("search-states", structures_sizes_sum);
+  _log_mati() << "CALCULATE_MEMORY: current all structures size" << structures_sizes_sum
+              << std::endl;
+  _log_mati() << "CALCULATE_MEMORY: max size for search-states"
+              << memory_size_logger.get_max_size("search-states").value_or(-1)
+              << std::endl;
 }
 
 template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::single_reset() {
-  
+  _log_structures_sizes();
 
   for (int i = 0; i < NUM_CONCURRENT_BFS; i++) {
     search_states[i].clear();
@@ -156,7 +161,9 @@ bool BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_next() {
     set_new_bfs_chunk_and_reset();
     return _next();
   } else {
-    _log_mati() << "CALCULATE_MEMORY: FINAL max size for search-states" << memory_size_logger.get_max_size("search-states").value_or(-1) << std::endl;
+    _log_mati() << "CALCULATE_MEMORY: FINAL max size for search-states"
+                << memory_size_logger.get_max_size("search-states").value_or(-1)
+                << std::endl;
     std::cout << "Finished bfs with counter: " << visited_nodes_counter
               << std::endl;
     return false;

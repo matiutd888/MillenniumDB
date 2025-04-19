@@ -33,8 +33,11 @@ private:
   VarId end;
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
-  Counter visited_nodes_counter;  
-  
+  Counter visited_nodes_counter;
+  StructureMemoryLogger memory_size_logger;
+
+  bool _should_log_memory = false;
+
   const SearchState *the_only_search_state;
 
   std::queue<ObjectId> start_nodes_q;
@@ -61,6 +64,7 @@ private:
   typename std::conditional<MULTIPLE_FINAL, boost::unordered_flat_set<uint64_t>,
                             DummySet>::type reached_final;
 
+  void _log_structures_sizes();
 public:
   // Statistics
   uint_fast32_t idx_searches = 0;
@@ -69,7 +73,13 @@ public:
                          RPQ_DFA automaton,
                          std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end),
-        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter"), the_only_search_state(nullptr) {}
+        automaton(automaton), provider(std::move(provider)),
+        visited_nodes_counter("visited-nodes-counter"),
+        the_only_search_state(nullptr) {
+
+    _should_log_memory = get_calculate_memory_flag_value();
+    _log_mati() << "should_log_memory: " << _should_log_memory << std::endl;
+  }
 
   void accept_visitor(BindingIterVisitor &visitor) override;
   void _begin(Binding &parent_binding) override;
