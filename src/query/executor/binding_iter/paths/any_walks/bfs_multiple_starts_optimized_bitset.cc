@@ -9,6 +9,8 @@
 #include <immintrin.h>
 #include <iostream>
 
+#include "bfs_multiple_starts_common.h"
+
 using namespace std;
 using namespace Paths::Any;
 
@@ -99,7 +101,23 @@ void BFSMultipleStartsOptimizedBitset<
 }
 
 template <bool MULTIPLE_FINAL>
+void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::_log_structures_sizes() {
+    if (!_should_log_memory) {
+        return;
+    }
+    size_t structures_sizes_sum = 0;
+    for(int i = 0; i < NUM_CONCURRENT_BFS; i++) {
+        size_t structure_size = estimate_unordered_node_map_memory(search_states[i]);
+        _log_mati() << "CALCULATE_MEMORY: structure " << i << " size: " << structure_size << std::endl;
+        structures_sizes_sum += structure_size;
+    }
+    _log_mati() << "CALCULATE_MEMORY: all structures " << structures_sizes_sum << std::endl;
+}
+
+template <bool MULTIPLE_FINAL>
 void BFSMultipleStartsOptimizedBitset<MULTIPLE_FINAL>::single_reset() {
+  
+
   for (int i = 0; i < NUM_CONCURRENT_BFS; i++) {
     search_states[i].clear();
   }

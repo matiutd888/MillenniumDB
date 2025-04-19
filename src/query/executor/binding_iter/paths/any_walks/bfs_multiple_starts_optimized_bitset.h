@@ -42,9 +42,11 @@ private:
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
   Counter visited_nodes_counter;
-
+  
   // where the results will be written, determined in begin()
   Binding *parent_binding;
+
+  bool _should_log_memory = false;
 
   // Optimized structures
   SearchState *single_search_state;
@@ -82,6 +84,8 @@ private:
   static void debug_print_bfs_id_bit_set(bfs_id_bit_set bfs_id_bit_set) {
     _debug_mati_simple() << bfs_id_bit_set;
   }
+
+  void _log_structures_sizes();
   // visit and visit_next. Maybe we can use set instead of map and the values
   // (bfs ids) can be taken from `bfss_that_reached_given_node`. hmm. are the
   // searchNodeIds useful at all?
@@ -114,7 +118,8 @@ public:
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),
         automaton(automaton), provider(std::move(provider)),
         visited_nodes_counter("visited-nodes-counter") {
-
+    _should_log_memory = get_calculate_memory_flag_value();
+    _log_mati() << "should_log_memory: " << _should_log_memory << std::endl;
     _debug_mati() << "hello!" << std::endl;
   }
 

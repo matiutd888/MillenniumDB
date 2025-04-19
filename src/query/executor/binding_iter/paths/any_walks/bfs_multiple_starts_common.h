@@ -1,11 +1,11 @@
 #ifndef BFS_MULTIPLE_STARTS_COMMON_H
 #define BFS_MULTIPLE_STARTS_COMMON_H
-
-
+#include "query/executor/binding_iter/paths/any_walks/search_state.h"
 #include "graph_models/object_id.h"
+#include <boost/unordered/unordered_node_map.hpp>
 #include <cstdlib>
-#include <string>
 #include <iostream>
+#include <string>
 
 // For unordered set
 struct objectid_hash {
@@ -20,7 +20,7 @@ struct searchnodeid_hash {
 
 inline std::string get_starting_label_str() {
   char *ms_start_label_c_str = std::getenv("MS_START_LABEL");
-  std::string ret = "start"; 
+  std::string ret = "start";
   if (ms_start_label_c_str != nullptr) {
     ret = ms_start_label_c_str;
   }
@@ -29,32 +29,62 @@ inline std::string get_starting_label_str() {
 
 class Counter {
 private:
-    unsigned long long int count;
-    std::string name;
+  unsigned long long int count;
+  std::string name;
 
 public:
-    // Constructor
-    Counter(std::string counterName) : count(0), name(counterName) {}
+  // Constructor
+  Counter(std::string counterName) : count(0), name(counterName) {}
 
-    void reset() {
-        count = 0;
-    }
+  void reset() { count = 0; }
 
-    // Method to increment counter
-    void increment() {
-        count++;
-    }
+  // Method to increment counter
+  void increment() { count++; }
 
-    // Method to get the current count
-    int getCount() const {
-        return count;
-    }
+  // Method to get the current count
+  int getCount() const { return count; }
 
-    // Overloaded ostream operator for printing
-    friend std::ostream& operator<<(std::ostream& os, const Counter& c) {
-        os << "Counter [" << c.name << "]: " << c.count;
-        return os;
-    }
+  // Overloaded ostream operator for printing
+  friend std::ostream &operator<<(std::ostream &os, const Counter &c) {
+    os << "Counter [" << c.name << "]: " << c.count;
+    return os;
+  }
 };
 
+// size_t estimate_map_memory(
+// const boost::unordered_node_map<std::pair<uint32_t, ObjectId>, Paths::Any::SearchState, searchnodeid_hash> &map);
+
+template <typename K, typename V, typename Hash>
+size_t estimate_unordered_node_map_memory(
+    const boost::unordered_node_map<K, V, Hash>& map)
+{
+    // Base size of the map object itself (pointers, size, load factor, etc.)
+    size_t map_object_size = sizeof(map);
+
+    // Estimate size of the dynamically allocated nodes (one per element)
+    size_t nodes_bytes = 0;
+    if (map.size() > 0) {
+        // Estimate the size of each node. Nodes in linked lists typically
+        // contain K, V, and at least a 'next' pointer. Maybe also cached hash.
+        // This is a GUESS!
+        size_t node_overhead_guess = sizeof(void*); // Minimal guess for 'next' pointer
+        // Could be higher, e.g., sizeof(void*) + sizeof(std::size_t) for cached hash
+
+        size_t estimated_node_size = sizeof(K) + sizeof(V) + node_overhead_guess;
+
+        nodes_bytes = map.size() * estimated_node_size;
+    }
+
+    // Estimate size of the bucket array
+    // The bucket array holds pointers (or indices/offsets) to the first node in each chain.
+    size_t bucket_array_bytes = 0;
+    if (map.bucket_count() > 0) {
+        // Estimate size of each entry in the bucket array. Usually a pointer.
+        size_t bucket_entry_size_guess = sizeof(void*);
+        bucket_array_bytes = map.bucket_count() * bucket_entry_size_guess;
+    }
+
+    // Total estimated memory
+    return map_object_size + nodes_bytes + bucket_array_bytes;
+}
 #endif
