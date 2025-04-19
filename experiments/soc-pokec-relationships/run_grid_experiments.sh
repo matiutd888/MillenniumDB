@@ -33,11 +33,11 @@ fi
 ms_strategy=$1
 
 # Define parameters for both scripts
-server_params=(start3)
+server_params=(start0 start1 start2)
 declare -A query_params_dict
-query_params_dict["start0"]="1 6 7"
-query_params_dict["start1"]="1 6"
-query_params_dict["start2"]="1 4"
+query_params_dict["start0"]="1 2 3"
+query_params_dict["start1"]="1 2"
+query_params_dict["start2"]="1 2"
 query_params_dict["start3"]="1 6"
 query_params_dict["start4"]="1 2 3 4"
 query_params_dict["start5"]="1"

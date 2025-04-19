@@ -59,8 +59,8 @@ public:
 class StructureMemoryLogger {
 private:
   struct log_data {
-    std::vector<size_t> logs;
-    std::optional<size_t> current_max_size;
+    std::vector<uint64_t> logs;
+    std::optional<uint64_t> current_max_size;
   };
 
   std::unordered_map<std::string, log_data> structure_logs;
@@ -68,7 +68,7 @@ private:
 public:
   StructureMemoryLogger() = default;
 
-  void log_size(const std::string &structure_name, size_t size_in_bytes) {
+  void log_size(const std::string &structure_name, uint64_t size_in_bytes) {
     log_data &data = structure_logs[structure_name];
     data.logs.push_back(size_in_bytes);
 
@@ -78,7 +78,7 @@ public:
     }
   }
 
-  std::vector<size_t> get_all_logs(const std::string &structure_name) const {
+  std::vector<uint64_t> get_all_logs(const std::string &structure_name) const {
     auto it = structure_logs.find(structure_name);
     if (it != structure_logs.end()) {
       return it->second.logs;
@@ -87,13 +87,18 @@ public:
     }
   }
 
-  std::optional<size_t> get_max_size(const std::string &structure_name) const {
+  std::optional<uint64_t> get_max_size(const std::string &structure_name) const {
     auto it = structure_logs.find(structure_name);
     if (it != structure_logs.end()) {
       return it->second.current_max_size;
     } else {
       return std::nullopt;
     }
+  }
+
+  // Name of the method is wrong, should be to_kb.
+  static float to_mb(uint64_t size_bytes) {
+    return (float(size_bytes) / 1024);
   }
 
   void clear_logs(const std::string &structure_name) {
@@ -107,24 +112,24 @@ public:
   void clear_all() { structure_logs.clear(); }
 };
 
-template <typename K, typename V, typename Hash>
-size_t estimate_unordered_node_map_memory(
-    const boost::unordered_node_map<K, V, Hash> &map) {
+template <typename K, typename V, typename Hash, typename P, typename A>
+uint64_t estimate_unordered_node_map_memory(
+    const boost::unordered_node_map<K, V, Hash, P, A> &map) {
   // Base size of the map object itself (pointers, size, load factor, etc.)
-  size_t map_object_size = sizeof(map);
+  uint64_t map_object_size = sizeof(map);
 
   // Estimate size of the dynamically allocated nodes (one per element)
-  size_t nodes_bytes = 0;
+  uint64_t nodes_bytes = 0;
   if (map.size() > 0) {
     // Estimate the size of each node. Nodes in linked lists typically
     // contain K, V, and at least a 'next' pointer. Maybe also cached hash.
     // This is a GUESS!
-    size_t node_overhead_guess =
+    uint64_t node_overhead_guess =
         sizeof(void *); // Minimal guess for 'next' pointer
-    // Could be higher, e.g., sizeof(void*) + sizeof(std::size_t) for cached
+    // Could be higher, e.g., sizeof(void*) + sizeof(std::uint64_t) for cached
     // hash
 
-    size_t estimated_node_size = sizeof(K) + sizeof(V) + node_overhead_guess;
+    uint64_t estimated_node_size = sizeof(K) + sizeof(V) + node_overhead_guess;
 
     nodes_bytes = map.size() * estimated_node_size;
   }
@@ -132,10 +137,10 @@ size_t estimate_unordered_node_map_memory(
   // Estimate size of the bucket array
   // The bucket array holds pointers (or indices/offsets) to the first node in
   // each chain.
-  size_t bucket_array_bytes = 0;
+  uint64_t bucket_array_bytes = 0;
   if (map.bucket_count() > 0) {
     // Estimate size of each entry in the bucket array. Usually a pointer.
-    size_t bucket_entry_size_guess = sizeof(void *);
+    uint64_t  bucket_entry_size_guess = sizeof(void *);
     bucket_array_bytes = map.bucket_count() * bucket_entry_size_guess;
   }
 
@@ -145,35 +150,35 @@ size_t estimate_unordered_node_map_memory(
 
 
 template <typename T, typename Hash, typename Pred, typename Alloc>
-size_t estimate_unordered_node_set_memory(
+uint64_t estimate_unordered_node_set_memory(
     const boost::unordered_node_set<T, Hash, Pred, Alloc> &set) {
   // Base size of the set object itself (pointers, size, load factor, etc.)
-  size_t set_object_size = sizeof(set);
+  uint64_t set_object_size = sizeof(set);
 
   // Estimate size of the dynamically allocated nodes (one per element)
-  size_t nodes_bytes = 0;
+  uint64_t nodes_bytes = 0;
   if (set.size() > 0) {
     // Estimate the size of each node. Nodes in linked lists typically
     // contain the value (T) and at least a 'next' pointer. Maybe cached hash.
     // This is a GUESS!
-    size_t node_overhead_guess =
+    uint64_t node_overhead_guess =
         sizeof(void *); // Minimal guess for 'next' pointer
-    // Could be higher, e.g., sizeof(void*) + sizeof(std::size_t) for cached
+    // Could be higher, e.g., sizeof(void*) + sizeof(std::uint64_t) for cached
     // hash
 
-    size_t estimated_node_size = sizeof(T) + node_overhead_guess;
+    uint64_t estimated_node_size = sizeof(T) + node_overhead_guess;
 
-    nodes_bytes = set.size() * estimated_node_size;
+    nodes_bytes = set.size() * uint64_t(estimated_node_size);
   }
 
   // Estimate size of the bucket array
   // The bucket array holds pointers (or indices/offsets) to the first node in
   // each chain.
-  size_t bucket_array_bytes = 0;
+  uint64_t bucket_array_bytes = 0;
   if (set.bucket_count() > 0) {
     // Estimate size of each entry in the bucket array. Usually a pointer.
-    size_t bucket_entry_size_guess = sizeof(void *);
-    bucket_array_bytes = set.bucket_count() * bucket_entry_size_guess;
+    uint64_t bucket_entry_size_guess = sizeof(void *);
+    bucket_array_bytes = set.bucket_count() * uint64_t(bucket_entry_size_guess);
   }
 
   // Total estimated memory

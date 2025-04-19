@@ -87,16 +87,6 @@ std::unique_ptr<BindingIter> PathPlan::run_multiple_walks(std::unique_ptr<Paths:
             return make_unique<Paths::Any::BFSMultipleStartsOptimized<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
         }
 
-    }else if (ms_strategy == "optimized") {
-        if (automaton.total_final_states > 1)
-        {
-            return make_unique<Paths::Any::BFSMultipleStartsOptimized<true>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
-        }
-        else
-        {
-            return make_unique<Paths::Any::BFSMultipleStartsOptimized<false>>(path_var, std::vector<Id>({start}), end, automaton, std::move(provider));
-        }
-
     } else if (ms_strategy == "optimized_bitset") {
         if (automaton.total_final_states > 1)
         {
