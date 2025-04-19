@@ -36,7 +36,7 @@ sf=$2
 no_limit_char="#"
 
 # Define parameters for both scripts
-server_params=(start0 start1 start2 start3 start4)
+server_params=(start0 start1 start2 start3 start4 start5)
 # server_params=(start0)
 declare -A query_params_dict
 query_params_dict["start0"]="#"
@@ -44,6 +44,7 @@ query_params_dict["start1"]="#"
 query_params_dict["start2"]="#"
 query_params_dict["start3"]="#"
 query_params_dict["start4"]="#"
+query_params_dict["start5"]="#"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
