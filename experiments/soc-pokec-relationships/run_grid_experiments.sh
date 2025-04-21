@@ -86,7 +86,7 @@ for s in "${server_params[@]}"; do
     sleep 2
     stop_server_script
     grep -oE 'Finished bfs with counter: Counter \[visited-nodes-counter\]: [0-9]+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$visited_nodes_file"
-    grep -oE 'CALCULATE_MEMORY: FINAL max size: [0-9]+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$memory_sizes_file"
+    grep -oP 'CALCULATE_MEMORY: FINAL max size: \K\S+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$memory_sizes_file"
     grep -Po 'Execution duration: \K\S+(?= ms)' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$execution_durations_file"
 
 done
