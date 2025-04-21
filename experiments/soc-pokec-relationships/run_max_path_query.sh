@@ -12,7 +12,7 @@ fi
 
 max_number_of_nodes_in_path="$1"
 
-INPUT_FILE="queries/t01-max-path-template.mql"
+INPUT_FILE="queries/t02-max-path-template.mql"
 OUTPUT_FILE=$(mktemp --suffix=.mql)
 
 sed "s/MAX_PATH/$max_number_of_nodes_in_path/g" "$INPUT_FILE" > "$OUTPUT_FILE"
