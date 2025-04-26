@@ -1,0 +1,6 @@
+// Starting node is overwritten
+// MATCH (P1)=[?p :Knows{MAX_PATH, MAX_PATH}]=>(?x)
+// RETURN *
+MATCH (P1)=[?p :Knows{1, MAX_PATH}]=>(P19)=[?q :Knows{1, MAX_PATH}]=>(?x)
+RETURN *
+

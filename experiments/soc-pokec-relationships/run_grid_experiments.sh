@@ -25,12 +25,13 @@ stop_mdb_server() {
 
 
 # Check if script parameter is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <MS_STRATEGY>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <MS_STRATEGY> <QUERY_TO_RUN>"
     exit 1
 fi
 
 ms_strategy=$1
+query_to_run=$2
 
 # Define parameters for both scripts
 # server_params=(start5 start0)
@@ -77,7 +78,7 @@ for s in "${server_params[@]}"; do
     for q in ${query_params_dict[$s]}; do
         start_time=$(date +%s)  # Get the start time
 	echo "Executing ./run_max_path_query.sh $q; start_time=$start_time"
-        { time ./run_max_path_query.sh "$q"; } >/dev/null 2>> "$results_dir/time_output.txt"
+        { time ./run_max_path_query.sh "$q" "$query_to_run"; } >/dev/null 2>> "$results_dir/time_output.txt"
         query_time=$(cat "$results_dir/time_output.txt" | tr '\n' ' ')
         end_time=$(date +%s)
         elapsed_time=$((end_time - start_time))  # Calculate elapsed time
