@@ -16,6 +16,7 @@ query_to_run="$2"
 INPUT_FILE="queries/t0${query_to_run}-max-path-template.mql"
 OUTPUT_FILE=$(mktemp --suffix=.mql)
 
+echo "Running query on $INPUT_FILE with MAX_PATH=$max_number_of_nodes_in_path"
 sed "s/MAX_PATH/$max_number_of_nodes_in_path/g" "$INPUT_FILE" > "$OUTPUT_FILE"
 
 

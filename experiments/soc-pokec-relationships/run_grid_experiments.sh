@@ -77,7 +77,7 @@ for s in "${server_params[@]}"; do
     # Iterate over query parameters
     for q in ${query_params_dict[$s]}; do
         start_time=$(date +%s)  # Get the start time
-	echo "Executing ./run_max_path_query.sh $q; start_time=$start_time"
+	echo "Executing ./run_max_path_query.sh $q $query_to_run; start_time=$start_time"
         { time ./run_max_path_query.sh "$q" "$query_to_run"; } >/dev/null 2>> "$results_dir/time_output.txt"
         query_time=$(cat "$results_dir/time_output.txt" | tr '\n' ' ')
         end_time=$(date +%s)
