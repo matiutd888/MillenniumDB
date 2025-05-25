@@ -12,6 +12,8 @@ def process_csv(input_filename):
     # Pivot the data to get a 2D table
     pivot_table = df.pivot(index='Server Param', columns='Query Param', values=values_column)
 
+    pivot_table = pivot_table.loc[df['Server Param'].drop_duplicates().values]
+
     # Generate the output filename based on the input file
     base_filename = os.path.splitext(input_filename)[0]  # Remove the .csv extension
     output_filename = f"{base_filename}-transformed.csv"  # Add -transformed.csv

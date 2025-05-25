@@ -25,22 +25,26 @@ stop_mdb_server() {
 
 
 # Check if script parameter is provided
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <MS_STRATEGY>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <MS_STRATEGY> <QUERY_TO_RUN>"
     exit 1
 fi
 
 ms_strategy=$1
+query_to_run=$2
 
 # Define parameters for both scripts
-server_params=(start0 start1 start2)
+# server_params=(start5 start0)
+server_params=(start5 start0 start1 start3 start4 start2)
 declare -A query_params_dict
-query_params_dict["start0"]="1 2 3"
-query_params_dict["start1"]="1 2"
-query_params_dict["start2"]="1 2"
-query_params_dict["start3"]="1 6"
-query_params_dict["start4"]="1 2 3 4"
-query_params_dict["start5"]="1"
+# query_params_dict["start5"]="1 2"
+# query_params_dict["start0"]="1 2"
+query_params_dict["start5"]="1 2 3 4 5 6 7"
+query_params_dict["start0"]="1 2 3 4 5 6 7"
+query_params_dict["start1"]="1 2 3 4 5 6 7"
+query_params_dict["start3"]="1 2 3 4 5 6"
+query_params_dict["start4"]="1 2 3 4 5 6"
+query_params_dict["start2"]="1 2 3 4 5"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
@@ -73,8 +77,8 @@ for s in "${server_params[@]}"; do
     # Iterate over query parameters
     for q in ${query_params_dict[$s]}; do
         start_time=$(date +%s)  # Get the start time
-	echo "Executing ./run_max_path_query.sh $q; start_time=$start_time"
-        { time ./run_max_path_query.sh "$q"; } >/dev/null 2>> "$results_dir/time_output.txt"
+	echo "Executing ./run_max_path_query.sh $q $query_to_run; start_time=$start_time"
+        { time ./run_max_path_query.sh "$q" "$query_to_run"; } >/dev/null 2>> "$results_dir/time_output.txt"
         query_time=$(cat "$results_dir/time_output.txt" | tr '\n' ' ')
         end_time=$(date +%s)
         elapsed_time=$((end_time - start_time))  # Calculate elapsed time
@@ -83,8 +87,8 @@ for s in "${server_params[@]}"; do
     sleep 2
     stop_server_script
     grep -oE 'Finished bfs with counter: Counter \[visited-nodes-counter\]: [0-9]+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$visited_nodes_file"
-    grep -oE 'CALCULATE_MEMORY: FINAL max size: [0-9]+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$memory_sizes_file"
-    grep -oE 'Execution duration: [0-9]+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$execution_durations_file"
+    grep -oP 'CALCULATE_MEMORY: FINAL max size: \K\S+' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$memory_sizes_file"
+    grep -Po 'Execution duration: \K\S+(?= ms)' "$log_file" | awk -v s="$s" -v q="$q" '{print s","NR","$NF}' >> "$execution_durations_file"
 
 done
 
