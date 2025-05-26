@@ -1,17 +1,20 @@
 #include "bfs_enum.h"
 
 #include "system/path_manager.h"
+#include "debug_mati.h"
 
 using namespace std;
 using namespace Paths::Any;
 
 template <bool MULTIPLE_FINAL>
 void BFSEnum<MULTIPLE_FINAL>::_begin(Binding& _parent_binding) {
+    _log_mati() << "MATI begin called!" << std::endl;
     parent_binding = &_parent_binding;
     // first_next = true;
 
     // Add starting states to open and visited
     ObjectId start_object_id = start.is_var() ? (*parent_binding)[start.get_var()] : start.get_OID();
+    _log_mati() << "start_object_id" << start_object_id << std::endl;
     auto state_inserted = visited.emplace(automaton.start_state,
                                           start_object_id,
                                           nullptr,

@@ -1,0 +1,4 @@
+// Starting node is overwritten
+MATCH (?y :start)=[?p :follows*/:works?]=>(?x)
+RETURN *
+
