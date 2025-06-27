@@ -1,4 +1,4 @@
 // Starting node is overwritten
-MATCH (?y)=[?p :follows*/:works?]=>(?x)
+MATCH (?y)=[:follows*/:works?]=>(?x :start)
 RETURN *
 
