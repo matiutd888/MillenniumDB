@@ -135,6 +135,8 @@ PathPlan::PathPlan(std::vector<bool> &begin_at_left,
     : begin_at_left(begin_at_left), direction(direction), path_var(path_var),
       from(from), to(to), path(path), from_assigned(from.is_OID()),
       to_assigned(to.is_OID()), path_semantic(path_semantic) {
+  _log_mati() << "PathPlan" << " " << from << " " << to << std::endl;
+  _log_mati() << "PathPlan" << "to_assigned=" << to_assigned << " from_assigned=" << from_assigned << std::endl;
   automaton = path.get_rpq_automaton(&QuadObjectId::get_named_node);
   auto inverted_path = path.clone()->invert();
   automaton_inverted =
@@ -181,7 +183,9 @@ std::set<VarId> PathPlan::get_vars() const {
   if (to.is_var() && !to_assigned) {
     result.insert(to.get_var());
   }
-
+  for(auto r : result) {
+      _log_mati() << "input var " << r << std::endl;
+  }
   return result;
 }
 
@@ -497,6 +501,8 @@ bool PathPlan::from_is_better_start_direction() const {
 
 unique_ptr<BindingIter> PathPlan::get_binding_iter() const {
   bool right_to_left = direction == OpPath::Direction::RIGHT_TO_LEFT;
+  _log_mati() << "hello from binding iter " << std::endl;
+  _log_mati() << "from assigned = " << from_assigned << " to_assigned =" << to_assigned << std::endl;
   if (from_assigned) {
     if (to_assigned) {
       auto star_at_from = from_is_better_start_direction();
@@ -517,6 +523,7 @@ unique_ptr<BindingIter> PathPlan::get_binding_iter() const {
       return get_enum(automaton_inverted, to, from.get_var());
     } else {
       auto star_at_from = from_is_better_start_direction();
+      _log_mati() << "start_at_from=" << star_at_from << std::endl;
       begin_at_left[path_var.id] = star_at_from != right_to_left;
       const RPQ_DFA &best_automaton =
           star_at_from ? automaton : automaton_inverted;
