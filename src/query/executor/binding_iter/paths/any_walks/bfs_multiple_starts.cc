@@ -40,7 +40,7 @@ void BFSMultipleStarts<MULTIPLE_FINAL>::_begin(Binding &_parent_binding) {
     bfses_to_be_visited[start_node_id] = {start_object_id};
 
     seen[start_object_id] = {
-        {start_node_id,
+        {start_node_id.second,
          MultiSourceSearchState(automaton.start_state, start_object_id, nullptr,
                                 true, ObjectId::get_null(), start_object_id)}};
     bfss_that_reached_given_node[start_node_id] = {start_object_id};
@@ -70,7 +70,7 @@ void BFSMultipleStarts<MULTIPLE_FINAL>::_reset() {
     bfses_to_be_visited[start_node_id] = {start_object_id};
 
     seen[start_object_id] = {
-        {start_node_id,
+        {start_node_id.second,
          MultiSourceSearchState(automaton.start_state, start_object_id, nullptr,
                                 true, ObjectId::get_null(), start_object_id)}};
     bfss_that_reached_given_node[start_node_id] = {start_object_id};
@@ -93,7 +93,7 @@ template <bool MULTIPLE_FINAL> bool BFSMultipleStarts<MULTIPLE_FINAL>::_next() {
               {curr_first_node.second.id, curr_first_node.second.id});
         }
         auto pointer_to_reached_state =
-            &seen[curr_first_node.second].find(curr_first_node)->second;
+            &seen[curr_first_node.second].find(curr_first_node.second)->second;
         auto path_id =
             path_manager.set_path(pointer_to_reached_state, path_var);
         parent_binding->add(path_var, path_id);
@@ -127,7 +127,8 @@ template <bool MULTIPLE_FINAL> bool BFSMultipleStarts<MULTIPLE_FINAL>::_next() {
     bfses_to_be_visited = bfses_to_be_visited_next;
     bfses_to_be_visited_next.clear();
   }
-  std::cout << "Finished bfs with counter: " << visited_nodes_counter << std::endl;
+  std::cout << "Finished bfs with counter: " << visited_nodes_counter
+            << std::endl;
   return false;
 }
 
@@ -165,7 +166,8 @@ BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbors(
                   << start_nodes_for_current_iteration.size()
                   << ", bfs_id = " << bfs_id << std::endl;
     start_nodes_for_current_iteration.pop();
-    auto ms_search_state_it = seen[bfs_id].find(node_for_current_iteration);
+    auto ms_search_state_it =
+        seen[bfs_id].find(node_for_current_iteration.second);
     assert(ms_search_state_it != seen[bfs_id].end());
     auto ms_search_state = &(ms_search_state_it->second);
     return ms_search_state;
@@ -219,15 +221,22 @@ BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbors(
         bfses_to_be_visited_next[new_node_id].insert(difference.begin(),
                                                      difference.end());
         for (const auto &bfs_to_visit_new_state_next : difference) {
-          MultiSourceSearchState s(new_node_id.first, new_node_id.second,
-                                   &(seen[bfs_to_visit_new_state_next]
-                                         .find(current_state_id)
-                                         ->second),
-                                   transition.inverse, transition.type_id,
-                                   bfs_to_visit_new_state_next);
-          seen[bfs_to_visit_new_state_next].insert({new_node_id, s});
           bfss_that_reached_given_node[new_node_id].insert(
               bfs_to_visit_new_state_next);
+          auto &seen_bfs_to_visit_new_state_next =
+              seen[bfs_to_visit_new_state_next];
+          if (seen_bfs_to_visit_new_state_next.find(new_node_id.second) ==
+              seen_bfs_to_visit_new_state_next.end()) {
+            auto curr_node_ms_state =
+                seen_bfs_to_visit_new_state_next.find(current_state_id.second);
+            assert(curr_node_ms_state !=
+                   seen_bfs_to_visit_new_state_next.end());
+            MultiSourceSearchState s(new_node_id.first, new_node_id.second,
+                                     &(curr_node_ms_state->second),
+                                     transition.inverse, transition.type_id,
+                                     bfs_to_visit_new_state_next);
+            seen_bfs_to_visit_new_state_next.insert({new_node_id.second, s});
+          }
         }
         // Check if new path is solution
         if (automaton.is_final_state[new_node_id.first]) {
@@ -266,8 +275,9 @@ BFSMultipleStarts<MULTIPLE_FINAL>::expand_neighbors(
             {
               auto bfs_id = start_nodes_for_current_iteration.front();
               start_nodes_for_current_iteration.pop();
+
               auto ms_search_state_it =
-                  seen[bfs_id].find(node_for_current_iteration);
+                  seen[bfs_id].find(node_for_current_iteration.second);
               assert(ms_search_state_it != seen[bfs_id].end());
               auto ms_search_state = &(ms_search_state_it->second);
               return ms_search_state;
