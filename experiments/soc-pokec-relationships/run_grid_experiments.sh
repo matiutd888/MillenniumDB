@@ -42,9 +42,9 @@ declare -A query_params_dict
 query_params_dict["start5"]="1 2 3 4 5 6 7"
 query_params_dict["start0"]="1 2 3 4 5 6 7"
 query_params_dict["start1"]="1 2 3 4 5 6 7"
-query_params_dict["start3"]="1 2 3 4 5 6"
-query_params_dict["start4"]="1 2 3 4 5 6"
-query_params_dict["start2"]="1 2 3 4 5"
+# query_params_dict["start3"]="1 2 3 4 5 6"
+# query_params_dict["start4"]="1 2 3 4 5 6"
+# query_params_dict["start2"]="1 2 3 4 5"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)

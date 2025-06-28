@@ -43,8 +43,8 @@ private:
 
   boost::unordered_node_map<
       ObjectId,
-      boost::unordered_node_map<SearchNodeId, MultiSourceSearchState,
-                                searchnodeid_hash>,
+      boost::unordered_node_map<ObjectId, MultiSourceSearchState,
+                                objectid_hash>,
       objectid_hash>
       seen;
   boost::unordered_node_map<SearchNodeId,
