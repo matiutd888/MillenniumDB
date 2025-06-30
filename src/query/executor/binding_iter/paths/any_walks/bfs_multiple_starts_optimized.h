@@ -76,15 +76,15 @@ private:
   //     objectid_hash>
   //     seen;
 
-  boost::unordered_node_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
+  boost::unordered_flat_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
       bfss_that_reached_given_node;
 
   // visit and visit_next. Maybe we can use set instead of map and the values
   // (bfs ids) can be taken from `bfss_that_reached_given_node`. hmm. are the
   // searchNodeIds useful at all?
-  boost::unordered_node_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
+  boost::unordered_flat_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
       bfses_to_be_visited;
-  boost::unordered_node_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
+  boost::unordered_flat_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
       bfses_to_be_visited_next;
 
   std::queue<SearchNodeId> visit_q;

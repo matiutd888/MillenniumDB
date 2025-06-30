@@ -230,6 +230,7 @@ const SearchState *BFSMultipleStartsOptimized<MULTIPLE_FINAL>::expand_neighbors(
     return ret;
   }
 
+  // TODO this line could be executed once and stored;
   auto bfses_to_be_visited_by_current_state =
       bfses_to_be_visited[current_state_id];
   // Iterate over the remaining transitions of current_state

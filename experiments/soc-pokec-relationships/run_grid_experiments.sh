@@ -25,26 +25,32 @@ stop_mdb_server() {
 
 
 # Check if script parameter is provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <MS_STRATEGY> <QUERY_TO_RUN>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <MS_STRATEGY> <QUERY_TO_RUN> <BUILD_DIR>"
     exit 1
 fi
 
 ms_strategy=$1
 query_to_run=$2
+build_dir=$3
 
 # Define parameters for both scripts
 # server_params=(start5 start0)
-server_params=(start5 start0 start1 start3 start4 start2)
+# server_params=(start5 start0 start1 start3 start4 start2)
+server_params=(start0 start1 start3 start2)
 declare -A query_params_dict
+query_params_dict["start0"]="1 2 3 4 5"
+query_params_dict["start1"]="1 2 3 4"
+query_params_dict["start3"]="1 2 3"
+query_params_dict["start2"]="1 2 3"
 # query_params_dict["start5"]="1 2"
 # query_params_dict["start0"]="1 2"
-query_params_dict["start5"]="1 2 3 4 5 6 7"
-query_params_dict["start0"]="1 2 3 4 5 6 7"
-query_params_dict["start1"]="1 2 3 4 5 6 7"
-query_params_dict["start3"]="1 2 3 4 5 6"
-query_params_dict["start4"]="1 2 3 4 5 6"
-query_params_dict["start2"]="1 2 3 4 5"
+# query_params_dict["start5"]="1 2 3 4 5 6 7"
+# query_params_dict["start0"]="1 2 3 4 5 6 7"
+# query_params_dict["start1"]="1 2 3 4 5 6 7"
+# query_params_dict["start3"]="1 2 3 4 5 6"
+# query_params_dict["start4"]="1 2 3 4 5 6"
+# query_params_dict["start2"]="1 2 3 4 5"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
@@ -52,7 +58,7 @@ results_dir="results/experiment-$ms_strategy-$timestamp"
 mkdir -p "$results_dir"
 
 echo "Saving to $results_dir"
-
+echo "Build dir $build_dir"
 # Output files
 execution_durations_file="$results_dir/$ms_strategy-execution-durations.csv"
 visited_nodes_file="$results_dir/$ms_strategy-visited-nodes-counter.csv"
@@ -71,7 +77,7 @@ for s in "${server_params[@]}"; do
     stop_server_script
 
     sleep 1
-    ./run_server.sh "$ms_strategy" "$s" data/databases/pokec_db > "$log_file" 2>&1 &
+    ./run_server.sh "$ms_strategy" "$s" data/databases/pokec_db "$build_dir" > "$log_file"  2>&1 &
     sleep 1
 
     # Iterate over query parameters
