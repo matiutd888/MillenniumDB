@@ -71,7 +71,7 @@ for s in "${server_params[@]}"; do
     stop_server_script
 
     sleep 1
-    ./run_server.sh "$ms_strategy" "$s" data/databases/pokec_db > "$log_file" 2>&1 &
+    ./run_server.sh "$ms_strategy" "$s" data/databases/pokec_db > "$log_file" "build/standard" 2>&1 &
     sleep 1
 
     # Iterate over query parameters
