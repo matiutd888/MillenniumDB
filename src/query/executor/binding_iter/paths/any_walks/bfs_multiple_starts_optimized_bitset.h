@@ -78,7 +78,7 @@ private:
   //     objectid_hash>
   //     seen;
 
-  boost::unordered_node_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
+  boost::unordered_flat_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
       bfss_that_reached_given_node;
 
   static void debug_print_bfs_id_bit_set(bfs_id_bit_set bfs_id_bit_set) {
@@ -89,9 +89,9 @@ private:
   // visit and visit_next. Maybe we can use set instead of map and the values
   // (bfs ids) can be taken from `bfss_that_reached_given_node`. hmm. are the
   // searchNodeIds useful at all?
-  boost::unordered_node_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
+  boost::unordered_flat_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
       bfses_to_be_visited;
-  boost::unordered_node_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
+  boost::unordered_flat_map<SearchNodeId, bfs_id_bit_set, searchnodeid_hash>
       bfses_to_be_visited_next;
 
   std::queue<SearchNodeId> visit_q;
@@ -102,9 +102,7 @@ private:
 
   // The index of the transition being currently explored
   uint_fast32_t current_transition;
-
   std::queue<SearchState *> search_states_for_current_iteration;
-
   typename std::conditional<MULTIPLE_FINAL, boost::unordered_flat_set<uint64_t>,
                             DummySet>::type reached_final[NUM_CONCURRENT_BFS];
 
@@ -113,8 +111,8 @@ public:
   uint_fast32_t idx_searches = 0;
 
   BFSMultipleStartsOptimizedBitset(VarId path_var, std::vector<Id> start_nodes,
-                             VarId end_nodes, RPQ_DFA automaton,
-                             std::unique_ptr<IndexProvider> provider)
+                                   VarId end_nodes, RPQ_DFA automaton,
+                                   std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),
         automaton(automaton), provider(std::move(provider)),
         visited_nodes_counter("visited-nodes-counter") {
