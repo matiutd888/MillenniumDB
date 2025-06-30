@@ -4,6 +4,7 @@
 #include <queue>
 #include <type_traits>
 
+#include "boost/unordered/unordered_flat_map_fwd.hpp"
 #include "query/executor/binding_iter.h"
 #include "query/executor/binding_iter/paths/any_walks/search_state.h"
 #include "query/executor/binding_iter/paths/index_provider/path_index.h"
@@ -36,8 +37,8 @@ private:
   VarId end;
   const RPQ_DFA automaton;
   std::unique_ptr<IndexProvider> provider;
-  Counter visited_nodes_counter;  
-  
+  Counter visited_nodes_counter;
+
   // where the results will be written, determined in begin()
   Binding *parent_binding;
 
@@ -47,7 +48,7 @@ private:
                                 searchnodeid_hash>,
       objectid_hash>
       seen;
-  boost::unordered_node_map<SearchNodeId,
+  boost::unordered_flat_map<SearchNodeId,
                             boost::unordered_node_set<ObjectId, objectid_hash>,
                             searchnodeid_hash>
       bfss_that_reached_given_node;
@@ -55,11 +56,11 @@ private:
   // visit and visit_next. Maybe we can use set instead of map and the values
   // (bfs ids) can be taken from `bfss_that_reached_given_node`. hmm. are the
   // searchNodeIds useful at all?
-  boost::unordered_node_map<SearchNodeId,
+  boost::unordered_flat_map<SearchNodeId,
                             boost::unordered_node_set<ObjectId, objectid_hash>,
                             searchnodeid_hash>
       bfses_to_be_visited;
-  boost::unordered_node_map<SearchNodeId,
+  boost::unordered_flat_map<SearchNodeId,
                             boost::unordered_node_set<ObjectId, objectid_hash>,
                             searchnodeid_hash>
       bfses_to_be_visited_next;
@@ -79,6 +80,7 @@ private:
   typename std::conditional<
       MULTIPLE_FINAL, boost::unordered_flat_set<std::pair<int64_t, uint64_t>>,
       DummyPairSet>::type reached_final;
+
 public:
   // Statistics
   uint_fast32_t idx_searches = 0;
@@ -87,7 +89,8 @@ public:
                     VarId end_nodes, RPQ_DFA automaton,
                     std::unique_ptr<IndexProvider> provider)
       : path_var(path_var), start_nodes(start_nodes), end(end_nodes),
-        automaton(automaton), provider(std::move(provider)), visited_nodes_counter("visited-nodes-counter") {
+        automaton(automaton), provider(std::move(provider)),
+        visited_nodes_counter("visited-nodes-counter") {
 
     _debug_mati() << "hello!" << std::endl;
   }
