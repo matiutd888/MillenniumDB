@@ -25,13 +25,14 @@ stop_mdb_server() {
 
 
 # Check if script parameter is provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <MS_STRATEGY> <QUERY_TO_RUN>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <MS_STRATEGY> <QUERY_TO_RUN> <BUILD_DIR>"
     exit 1
 fi
 
 ms_strategy=$1
 query_to_run=$2
+build_dir=$3
 
 # Define parameters for both scripts
 # server_params=(start5 start0)
@@ -71,7 +72,7 @@ for s in "${server_params[@]}"; do
     stop_server_script
 
     sleep 1
-    ./run_server.sh "$ms_strategy" "$s" data/databases/pokec_db > "$log_file" 2>&1 &
+    ./run_server.sh "$ms_strategy" "$s" data/databases/pokec_db "$build_dir" > "$log_file"  2>&1 &
     sleep 1
 
     # Iterate over query parameters
