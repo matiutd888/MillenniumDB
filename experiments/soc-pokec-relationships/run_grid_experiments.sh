@@ -39,12 +39,12 @@ server_params=(start5 start0 start1 start3 start4 start2)
 declare -A query_params_dict
 # query_params_dict["start5"]="1 2"
 # query_params_dict["start0"]="1 2"
-query_params_dict["start5"]="1 2 3 4 5 6 7"
-query_params_dict["start0"]="1 2 3 4 5 6 7"
-query_params_dict["start1"]="1 2 3 4 5 6 7"
-query_params_dict["start3"]="1 2 3 4 5 6"
-query_params_dict["start4"]="1 2 3 4 5 6"
-query_params_dict["start2"]="1 2 3 4 5"
+query_params_dict["start5"]="4 6"
+query_params_dict["start0"]="4 6"
+query_params_dict["start1"]="4 6"
+query_params_dict["start3"]="4 6"
+query_params_dict["start4"]="4"
+query_params_dict["start2"]="4"
 
 # Create results directory with timestamp
 timestamp=$(date +%Y-%m-%d_%H-%M-%S)
