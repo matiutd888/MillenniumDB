@@ -136,6 +136,7 @@ void BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_reset() {
   auto state_inserted =
       visited.emplace(automaton.start_state, current_start_node, nullptr, true,
                       ObjectId::get_null());
+  the_only_search_state = state_inserted.first.operator->();
   open.push(state_inserted.first.operator->());
   iter = make_unique<NullIndexIterator>();
 }
