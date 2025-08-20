@@ -91,7 +91,7 @@ bool BFSMultipleStartsNaive<MULTIPLE_FINAL>::single_next() {
         the_only_search_state = reached_final_state;
       }
       // HERE IS THE LOGIC THAT OVERRIDES RETURNED PATH
-      reached_final_state = the_only_search_state;
+// reached_final_state = the_only_search_state;
       auto path_id = path_manager.set_path(reached_final_state, path_var);
       parent_binding->add(path_var, path_id);
       parent_binding->add(end, reached_final_state->node_id);
