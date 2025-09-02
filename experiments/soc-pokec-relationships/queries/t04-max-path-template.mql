@@ -1,3 +1,3 @@
 // Starting node is overwritten
-MATCH (P1)=[?p :Knows / ^(:Knows) / :Knows / ^(:Knows)]=>(?x)
+MATCH (P1)=[?p :Knows / ^(:Knows) / :Knows / ^(:Knows) / :Knows / ^(:Knows)]=>(?x)
 RETURN *
