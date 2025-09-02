@@ -35,7 +35,7 @@ get_simple_function_name(const std::string &fullName) {
 static inline bool get_calculate_memory_flag_value() {
 
   char *calculate_memory_c_str = std::getenv("CALCULATE_MEMORY");
-  std::string calculate_memory_str = "1";
+  std::string calculate_memory_str = "0";
   if (calculate_memory_c_str != nullptr) {
     calculate_memory_str = calculate_memory_c_str;
   }

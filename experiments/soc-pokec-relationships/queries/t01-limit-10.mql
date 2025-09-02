@@ -1,4 +1,3 @@
 // Starting node is overwritten
-MATCH (P1)=[?p :Knows*]=>(?x)
+MATCH (P1)=[?p :Knows{1,3}]=>(?x)
 RETURN *
-LIMIT 10
