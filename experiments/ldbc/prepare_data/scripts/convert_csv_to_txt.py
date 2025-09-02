@@ -7,6 +7,7 @@ def convert_csv_to_txt(input_file):
         df = pd.read_csv(input_file, sep="|")
         for _, row in df.iterrows():
             print(f"P{row['Person1Id']}->P{row['Person2Id']} :Knows")
+            print(f"P{row['Person2Id']}->P{row['Person1Id']} :Knows")
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
 
